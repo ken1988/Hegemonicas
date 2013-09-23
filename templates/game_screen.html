@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Insert title here</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="./stylesheets/genstyle.css" >
+<link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/humanity/jquery-ui.css" rel="stylesheet" />
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+    var icons = {
+            header: "ui-icon-circle-arrow-e",
+            activeHeader: "ui-icon-circle-arrow-s"
+        };
+
+	$("#header-menu li").hover(function() {
+		$(this).children('ul').show();
+	}, function() {
+		$(this).children('ul').hide();
+	});
+
+	$("#menu").hide();
+	$("#action_panel").menu();
+
+	$("#worldmap").click(function(e) {
+	var dx=e.clientX;
+	var dy=e.clientY;
+	$("#menu").menu().show();
+	$("#menu").css({top:dy,left:dx});
+	});
+});
+</script>
+</head>
+<body>
+	<header>
+		<h1>Hegemonicas</h1>
+	</header>
+	<nav id="item-preview" class ="header-nav">
+		<ul>
+			<li class="aleart"><img src="/img/aleart.png">Food shortage</li>
+			<li class="aleart"><img src="/img/aleart.png">XXXXXX</li>
+			<li class="warning2"><img src="/img/caution2.png">XXXXXX</li>
+			<li class="warning"><img src="/img/caution.png">XXXXXX</li>
+			<li>XXXXXX</li>
+		</ul>
+	</nav>
+	<div id="main">
+		<div id="worldmap">
+			<img src="/img/mapx1y1.png" alt="" /><img src="/img/mapx2y1.png" alt="" /><img src="/img/mapx3y1.png" alt="" />
+			<img src="/img/mapx1y2.png" alt="" /><img src="/img/mapx2y2.png" alt="" /><img src="/img/mapx3y2.png" alt="" />
+		</div>
+	<div id="rightpanel">
+	<div id="maptool">
+	<h2>マップ情報</h2>
+	<p>
+	ここにマップ情報を表示
+	</p>
+	</div>
+	<ul id="action_panel">
+			<li><a href="/game_diplomacy">外交</a></li>
+			<li><a href="/game_screen">内政</a></li>
+			<li><a href="/game_data">データ</a></li>
+			<li><a href="/game_trade">貿易</a></li>
+			<li><a href="/settings">設定</a></li>
+	</ul>
+		<input type="button" value="右へ移動">
+	</div>
+	<ul id="menu">
+    	<li><a href="#">Item 1</a></li>
+    	<li><a href="#">Item 2</a></li>
+   	 	<li><a href="#">Item 3</a>
+        	<ul>
+            	<li><a href="#">Item 3-1</a></li>
+            	<li><a href="#">Item 3-2</a></li>
+            	<li><a href="#">Item 3-3</a></li>
+            	<li><a href="#">Item 3-4</a></li>
+            	<li><a href="#">Item 3-5</a></li>
+        	</ul>
+    	</li>
+    	<li><a href="#">Item 4</a></li>
+    	<li><a href="#">Item 5</a></li>
+	</ul>
+	</div>
+	<footer>copyrights 2012</footer>
+</body>
+</html>
