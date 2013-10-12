@@ -116,7 +116,7 @@ class MainteUser(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
         self.response.out.write(template.render(path, template_values))
 
-class register(webapp.RequestHandler):
+class register(webapp2.RequestHandler):
 
     def get(self):
         #get => 登録画面への初回アクセス。特に何も処理しない。
@@ -128,9 +128,13 @@ class register(webapp.RequestHandler):
 
     def post(self):
         #post => 登録画面へのデータ送信。入力チェックと確認画面の表示、DBへの登録。
-        template_values = {}
-        path = os.path.join(os.path.dirname(__file__), './templates/register.html')
-        self.response.out.write(template.render(path, template_values))
+
+        newUser = user()
+        newUser.name = self.request.get("name")
+        newUser.password = self.request.get("password")
+        newUser.put()
+
+        self.redirect('/game_screen')
 
 class ManageSession(webapp2.RequestHandler):
 

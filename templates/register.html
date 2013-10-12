@@ -10,20 +10,22 @@
 google.load("jquery", "1.7");
 google.load("jqueryui", "1.8");
 </script>
-</script>
 
 </head>
 <body>
 <header><h1>Hegemonicas</h1></header>
 <div id="main">
 <form action="/register" method="post">
+<label for="e-mail">メールアドレス：</label>
+<input name="e-mail" type="email" required="required"><br>
 <label for="name">ユーザID：</label>
 <input name="name" type="text"  required><br>
 <label for="password">パスワード：</label>
 <input name="password" type="password"  required><br>
-<label for="Confirmpassword">パスワード確認：</label>
-<input name="Confirmpassword" type="password"  required>
-<input type="hidden" name="phase" id="phase" value={{ phase }}></form>
+<label for="Confpass">パスワード確認：</label>
+<input name="Confpass" type="password"  required><br>
+<input type="hidden" name="phase" id="phase" value={{ phase }}>
+<input type="submit" value="送信"></form>
 </div>
 	<footer>copyrights 2012</footer>
 </body>
