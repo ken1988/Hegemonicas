@@ -4,6 +4,7 @@ import webapp2
 import os
 import csv
 import teleforum
+import gamescreen
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
@@ -44,13 +45,6 @@ class Messages(db.Model):
     SecClear = db.RatingProperty()
     postDate = db.TimeProperty()
     tags = db.StringListProperty()
-
-class nationData(db.Model):
-    ownerID = db.StringProperty(multiline=False)
-    orgID = db.StringProperty(multiline=False)
-    basicData = db.StringListProperty()
-    materialData = db.StringListProperty()
-    policyData = db.StringListProperty()
 
 class MakeMap(webapp2.RequestHandler):
 
@@ -155,6 +149,7 @@ class ManageSession(webapp2.RequestHandler):
 class GameScreen(webapp2.RequestHandler):
 
     def get(self):
+        gamescreen.OverviewResp
         template_values = {}
         path = os.path.join(os.path.dirname(__file__), './templates/game_screen.html')
         self.response.out.write(template.render(path, template_values))
@@ -165,14 +160,7 @@ class MailScreen(webapp2.RequestHandler):
     def get(self):
         # who want to logout the system uses get method.
 
-        path = os.path.join(os.path.dirname(__file__), './templates/index.html')
-        self.redirect('/MakeMap')
-
-    def post(self):
-        # who want to login the system uses get method.
-        user().get_by_key_name("name", None)
-
-        self.redirect('/game_screen')
+        path = os.path.join(os.path.dirname(__file__), './templates/mail_screen.html')
 
 class PolicyScreen(webapp2.RequestHandler):
 
