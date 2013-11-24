@@ -27,10 +27,10 @@ class OverviewResp():
 
 class MakeNewNation():
 
-    def register(self):
+    def register(self,uid,nation_name):
         newNation = nationData()
-        newNation.ownerID = self.request.get("uid")
-        newNation.Nation_Name = self.request.get("Nation_name")
+        newNation.ownerID = uid
+        newNation.Nation_Name = nation_name
         newNation.put()
         return
 

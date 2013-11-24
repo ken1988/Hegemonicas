@@ -129,8 +129,7 @@ class register(webapp2.RequestHandler):
     def post(self):
         #post => 登録画面へのデータ送信。入力チェックと確認画面の表示、DBへの登録。
 
-        mk_nation = gamescreen.MakeNewNation()
-        mk_nation.register(self)
+
 
         uid = self.request.get("uid")
         newUser = user(key_name = uid)
@@ -141,6 +140,9 @@ class register(webapp2.RequestHandler):
         newUser.nationID = self.request.get("uid")
         newUser.SecClear = 1
         newUser.put()
+
+        mk_nation = gamescreen.MakeNewNation()
+        mk_nation.register(uid,self.request.get("Nation_name"))
 
         self.redirect('/game_screen')
 
