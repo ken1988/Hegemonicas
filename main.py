@@ -129,9 +129,17 @@ class register(webapp2.RequestHandler):
     def post(self):
         #post => 登録画面へのデータ送信。入力チェックと確認画面の表示、DBへの登録。
 
-        newUser = user()
+        mk_nation = gamescreen.MakeNewNation()
+        mk_nation.register(self)
+
+        uid = self.request.get("uid")
+        newUser = user(key_name = uid)
+
         newUser.name = self.request.get("name")
         newUser.password = self.request.get("password")
+        newUser.mail = self.request.get("e-mail")
+        newUser.nationID = self.request.get("uid")
+        newUser.SecClear = 1
         newUser.put()
 
         self.redirect('/game_screen')
@@ -140,24 +148,27 @@ class ManageSession(webapp2.RequestHandler):
 
     def get(self):
         # who want to logout the system uses get method.
-
-        path = os.path.join(os.path.dirname(__file__), './templates/index.html')
-        self.redirect('/MakeMap')
+        self.redirect('/')
 
     def post(self):
         # who want to login the system uses get method.
-        pr_user = user().get_by_key_name("name", None)
+        Uname = self.request.get("name")
+        Pword = self.request.get("password")
+        pr_user = user().get_by_key_name(Uname, None)
 
-        self.redirect('/game_screen')
+        if Pword == pr_user.password:
+            self.redirect('/gamescreen')
+        else:
+            self.redirect('/')
 
 class GameScreen(webapp2.RequestHandler):
 
     def get(self):
+
         gamescreen.OverviewResp
         template_values = {}
         path = os.path.join(os.path.dirname(__file__), './templates/game_screen.html')
         self.response.out.write(template.render(path, template_values))
-
 
 class MailScreen(webapp2.RequestHandler):
 

@@ -1,4 +1,5 @@
 @CHARSET "UTF-8";
+@import url(http://fonts.googleapis.com/css?family=Andika);
 
 html,body,h1,h2,h3,h4,h5,h6,ol,dl,ul,li,dt,dd,p,header,hgroup,section,article,aside,footer,figure,figcaption,nav,div,img
 {
@@ -21,8 +22,10 @@ header{
 	border-width: 1px;
 }
 header h1{
-font-size: 36px;
-color: #8C2318;
+	background-color:orange;
+	font-family: 'Andika', sans-serif;
+	font-size: 18px;
+	color: white;
 }
 div{
 	border-style: solid;
@@ -84,6 +87,7 @@ div{
 	vertical-align: middle;
 
 }
+
 .header-nav li{
   float: left;
   width: 200px;

@@ -18,8 +18,12 @@ google.load("jqueryui", "1.8");
 <form action="/register" method="post">
 <label for="e-mail">メールアドレス：</label>
 <input name="e-mail" type="email" required="required"><br>
-<label for="name">ユーザID：</label>
+<label for="uid">ユーザID：</label>
+<input name="uid" type="text"  required><br>
+<label for="name">ユーザ名：</label>
 <input name="name" type="text"  required><br>
+<label for="name">国名：</label>
+<input name="Nation_name" type="text"  required><br>
 <label for="password">パスワード：</label>
 <input name="password" type="password"  required><br>
 <label for="Confpass">パスワード確認：</label>
@@ -27,6 +31,6 @@ google.load("jqueryui", "1.8");
 <input type="hidden" name="phase" id="phase" value={{ phase }}>
 <input type="submit" value="送信"></form>
 </div>
-	<footer>copyrights 2012</footer>
+	<footer>copyrights 2013</footer>
 </body>
 </html>

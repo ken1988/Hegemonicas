@@ -9,12 +9,15 @@
 <script type="text/javascript">google.load("jquery", "1.7");</script>
 </head>
 <body>
-<header><h1>Hegemonicas</h1></header>
+<header>
+		<img src="/img/logo.png">
+</header>
 <div id="login-box">
 	<form action="/login"  method="post">
-		ユーザID<input type="text">パスワード<input type="password"><input type="submit"  value="Login" class="css3button">
+		ユーザID<input type="text" name="name">パスワード<input type="password" name="password"><input type="submit"  value="Login" class="css3button">
 	</form>
-		<form action="/register"><input type="submit"  value="Create New User" class="css3button">
+
+	<form action="/register"><input type="submit"  value="Create New User" class="css3button">
 	</form>
 </div>
 	<div id="main">
