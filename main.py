@@ -3,8 +3,11 @@ import random
 import webapp2
 import os
 import csv
+import uuid
 import teleforum
 import gamescreen
+import datetime
+import nation
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
@@ -128,9 +131,6 @@ class register(webapp2.RequestHandler):
 
     def post(self):
         #post => 登録画面へのデータ送信。入力チェックと確認画面の表示、DBへの登録。
-
-
-
         uid = self.request.get("uid")
         newUser = user(key_name = uid)
 
@@ -141,8 +141,9 @@ class register(webapp2.RequestHandler):
         newUser.SecClear = 1
         newUser.put()
 
-        mk_nation = gamescreen.MakeNewNation()
-        mk_nation.register(uid,self.request.get("Nation_name"))
+        nation_name = self.request.get("Nation_name")
+        newNation = nation.Nation_Main()
+        newNation.register(uid, nation_name)
 
         self.redirect('/game_screen')
 
@@ -159,9 +160,38 @@ class ManageSession(webapp2.RequestHandler):
         pr_user = user().get_by_key_name(Uname, None)
 
         if Pword == pr_user.password:
-            self.redirect('/gamescreen')
+            putcookie.get(self)
+            self.redirect('/game_screen')
         else:
             self.redirect('/')
+
+class putcookie(webapp2.RequestHandler):
+    def get(self):
+
+        now_date = datetime.datetime.now()
+        expires = now_date
+        expires = expires + datetime.timedelta(seconds=+30)
+
+        expires = expires.strftime('%a, %d-%b-%Y %H:%M:%S GMT')
+
+        client_id = self.request.cookies.get('name', '')
+        if client_id == '':
+            client_id = str(uuid.uuid4())
+            self.response.write('set new<br />')
+
+            myCookie = 'name=%s; expires=%s;' % (client_id, expires)
+            self.response.headers.add_header('Set-Cookie', myCookie )
+
+            self.response.write(myCookie)
+        else:
+            self.response.write('exist<br />')
+
+
+class getcookie(webapp2.RequestHandler):
+    def get(self):
+
+        client_id = self.request.cookies.get('name', '')
+        self.response.write(client_id)
 
 class GameScreen(webapp2.RequestHandler):
 
@@ -172,27 +202,6 @@ class GameScreen(webapp2.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), './templates/game_screen.html')
         self.response.out.write(template.render(path, template_values))
 
-class MailScreen(webapp2.RequestHandler):
-
-    def get(self):
-        # who want to logout the system uses get method.
-
-        path = os.path.join(os.path.dirname(__file__), './templates/mail_screen.html')
-
-class PolicyScreen(webapp2.RequestHandler):
-
-    def get(self):
-        template_values = {}
-        path = os.path.join(os.path.dirname(__file__), './templates/policy_screen.html')
-        self.response.out.write(template.render(path, template_values))
-
-class DiplomacyScreen(webapp2.RequestHandler):
-
-    def get(self):
-        teleforum.Loadforums
-        template_values = {}
-        path = os.path.join(os.path.dirname(__file__), './templates/diplomacy_screen.html')
-        self.response.out.write(template.render(path, template_values))
 
 class SettingsScreen(webapp2.RequestHandler):
 
@@ -219,8 +228,5 @@ app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/login', ManageSession),
                                 ('/logout', ManageSession),
                                 ('/game_screen', GameScreen),
-                                ('/mail', MailScreen),
-                                ('/game_diplomacy', DiplomacyScreen),
-                                ('/game_policy', PolicyScreen),
                                 ('/settings', SettingsScreen)],
                                      debug=True)
