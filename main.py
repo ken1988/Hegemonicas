@@ -11,6 +11,24 @@ import nation
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
+from webapp2_extras import sessions
+from webapp2_extras import auth
+
+class BaseSessionRequestHandler(webapp2.RequestHandler):
+    def dispatch(self):
+        #このリクエストに対するセッションストアを作る
+        self.session_store = sessions.get_store(request=self.request)
+        try:
+            #ディスパッチャーの起動
+            webapp2.RequestHandler.dispatch(self)
+        finally:
+            #セッションを保存
+            self.session_store.save_sessions(self.response)
+
+    @webapp2.cached_property
+    def session(self):
+        backend = self.session_store.config.get('default_backend','securecookie')
+        return self.session_store.get_session(backend=backend)
 
 class MapChip(db.Model):
     locationX = db.IntegerProperty()
@@ -160,8 +178,10 @@ class ManageSession(webapp2.RequestHandler):
         pr_user = user().get_by_key_name(Uname, None)
 
         if Pword == pr_user.password:
-            putcookie.get(self)
-            self.redirect('/game_screen')
+            self.session['user'] = pr_user
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('test:%d'%user)
+            #self.('/game_screen')
         else:
             self.redirect('/')
 
@@ -221,6 +241,8 @@ class MainPage(webapp2.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), './templates/index.html')
         self.response.out.write(template.render(path, template_values))
 
+
+
 app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/MakeMap', MakeMap),
                                 ('/MainteUser', MainteUser),
@@ -228,5 +250,17 @@ app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/login', ManageSession),
                                 ('/logout', ManageSession),
                                 ('/game_screen', GameScreen),
-                                ('/settings', SettingsScreen)],
-                                     debug=True)
+                                ('/settings', SettingsScreen)
+                                ],debug=True,
+                                    config={'webapp2_extras.sessions':
+                                            {'secret_key':'my_seacret_key',     #秘密キー必須
+                                            'cookie_name':'TestSessio2n',      #セッションクッキー名
+                                            'session_max_age':360,             #セッション生存時間 (sec)
+                                            'cookie_arg':
+                                            {'max_age':None,
+                                             'domain':None,
+                                             'path':'/',
+                                             'secure':None,
+                                             'httponly':None},
+                                             'default_backend':'securecookie',  #保存先の指定
+                                             },})

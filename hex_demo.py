@@ -1,6 +1,6 @@
 
 import numpy as np
-import matplotlib.pyplot as
+import matplotlib.pyplot as plt
 
 np.random.seed(0)
 n = 100000
