@@ -7,7 +7,7 @@ import uuid
 import teleforum
 import gamescreen
 import datetime
-import nation
+import models
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
@@ -44,12 +44,6 @@ class MapChip(db.Model):
     navigate = db.StringProperty(multiline=False)
     national = db.StringProperty(multiline=False)
 
-class user(db.Model):
-    name = db.StringProperty(multiline= False)
-    password = db.StringProperty(multiline=False)
-    mail = db.EmailProperty()
-    nationID = db.StringProperty(multiline=False)
-    SecClear = db.RatingProperty()
 
 class news(db.Model):
     nationID = db.StringProperty(multiline=False)
@@ -68,45 +62,8 @@ class Messages(db.Model):
     tags = db.StringListProperty()
 
 class MakeMap(webapp2.RequestHandler):
-
     def get(self):
-
-        terrain = ["Sea","Plain","Mountain"]
-        architect = ['Town','Farm','None','None','None','None','None','None']
-        reader=csv.reader(open('test-map.csv'))
-
-        locy = 0
-        for row in reader:
-            locx = 0
-
-            for column in row:
-                column = int(column)
-                newName = "X" + str(locx) +":Y" + str(locy)
-                newMap = MapChip(key_name = newName)
-                newMap.locationX = locx
-                newMap.locationY = locy
-                newMap.terra = terrain[column]
-
-                if newMap.terra == "Plain":
-                    arc = random.choice(architect)
-                    newMap.architect = arc
-                    if arc == "Town":
-                        newMap.pop = 100
-                newMap.put()
-
-                template_values = {
-                                   'locationX': newMap.locationX,
-                                   'locationY': newMap.locationY,
-                                   'terra'    : newMap.terra,
-                                   'architect': newMap.architect,
-                                   'pop'      : newMap.pop,
-                                   }
-
-                path = os.path.join(os.path.dirname(__file__), './templates/MapMaker.html')
-                self.response.out.write(template.render(path, template_values))
-                locx = locx + 1
-
-            locy = reader.line_num
+        self.redirect('/')
 
 class UpdateMap(webapp2.RequestHandler):
 
@@ -119,7 +76,7 @@ class UpdateMap(webapp2.RequestHandler):
 class MainteUser(webapp.RequestHandler):
 
     def get(self):
-        userdata =user().all.fetch(20)
+        userdata =models.user().all.fetch(20)
 
         template_values = {
                        'name': userdata.name,
@@ -150,19 +107,21 @@ class register(webapp2.RequestHandler):
     def post(self):
         #post => 登録画面へのデータ送信。入力チェックと確認画面の表示、DBへの登録。
         uid = self.request.get("uid")
-        newUser = user(key_name = uid)
-
-        newUser.name = self.request.get("name")
-        newUser.password = self.request.get("password")
-        newUser.mail = self.request.get("e-mail")
-        newUser.nationID = self.request.get("uid")
-        newUser.SecClear = 1
-        newUser.put()
-
+        iname = self.request.get("name")
+        ipassword = self.request.get("password")
+        imail = self.request.get("e-mail")
+        inationID = self.request.get("uid")
         nation_name = self.request.get("Nation_name")
-        newNation = nation.Nation_Main()
-        newNation.register(uid, nation_name)
 
+        #-----------------------------------------------------
+        newUser = models.user(key_name = uid)
+        newUser.create(iname, ipassword, imail, inationID)
+        newUser.put()
+        #-----------------------------------------------------
+        newNation = models.Nation()
+        newNation.initialize(uid, nation_name)
+        newNation.put()
+        #-----------------------------------------------------
         self.redirect('/game_screen')
 
 class ManageSession(webapp2.RequestHandler):
@@ -175,12 +134,12 @@ class ManageSession(webapp2.RequestHandler):
         # who want to login the system uses get method.
         Uname = self.request.get("name")
         Pword = self.request.get("password")
-        pr_user = user().get_by_key_name(Uname, None)
+        pr_user = models.user().get_by_key_name(Uname, None)
 
         if Pword == pr_user.password:
             self.session['user'] = pr_user
             self.response.headers['Content-Type'] = 'text/plain'
-            self.response.out.write('test:%d'%user)
+            self.response.out.write('test:%d'%models.user)
             #self.('/game_screen')
         else:
             self.redirect('/')

@@ -6,7 +6,7 @@ Created on 2013/10/12
 import random
 import webapp2
 import os
-import nation
+import models
 from google.appengine.ext import db
 
 class OverviewResp():
@@ -14,5 +14,5 @@ class OverviewResp():
     classdocs
     '''
     def get(self):
-        nation.DB_Nation.get_by_key_name("test2", None)
+        models.Nation.get_by_key_name("test2", None)
         return
