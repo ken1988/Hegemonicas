@@ -1,3 +1,4 @@
+# -*- coding: utf_8 -*-
 import random
 from google.appengine.ext import db
 
