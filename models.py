@@ -1,3 +1,9 @@
+# -*- coding: utf_8 -*-
+'''
+Created on 2015/05/07
+
+@author: ken
+'''
 import random
 from google.appengine.ext import db
 
