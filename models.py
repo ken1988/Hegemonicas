@@ -1,4 +1,12 @@
 # -*- coding: utf_8 -*-
+<<<<<<< HEAD
+=======
+'''
+Created on 2015/05/07
+
+@author: ken
+'''
+>>>>>>> branch 'master' of git@github.com:ken1988/Hegemonicas.git
 import random
 from google.appengine.ext import db
 
