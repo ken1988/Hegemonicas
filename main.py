@@ -4,95 +4,75 @@ import webapp2
 import os
 import csv
 import uuid
-import teleforum
+from models import external_models
 import gamescreen
 import datetime
-import models
+from models import internal_models
+from models import common_models
+import Cookie
+import hashlib
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
 from webapp2_extras import sessions
 from webapp2_extras import auth
 
-class BaseSessionRequestHandler(webapp2.RequestHandler):
-    def dispatch(self):
-        #このリクエストに対するセッションストアを作る
-        self.session_store = sessions.get_store(request=self.request)
-        try:
-            #ディスパッチャーの起動
-            webapp2.RequestHandler.dispatch(self)
-        finally:
-            #セッションを保存
-            self.session_store.save_sessions(self.response)
-
-    @webapp2.cached_property
-    def session(self):
-        backend = self.session_store.config.get('default_backend','securecookie')
-        return self.session_store.get_session(backend=backend)
-
-class MapChip(db.Model):
-    locationX = db.IntegerProperty()
-    locationY = db.IntegerProperty()
-    terra = db.StringProperty(multiline=False)
-    architect = db.StringProperty(multiline=False)
-    pop = db.IntegerProperty()
-    indpop1 = db.IntegerProperty()
-    indpop2 = db.IntegerProperty()
-    indpop3 = db.IntegerProperty()
-    poptype = db.StringProperty(multiline=False)
-    resistPoint = db.IntegerProperty()
-    navigate = db.StringProperty(multiline=False)
-    national = db.StringProperty(multiline=False)
-
-
-class news(db.Model):
-    nationID = db.StringProperty(multiline=False)
-    contents = db.TextProperty()
-    postDate = db.DateTimeProperty()
-    location = db.StringListProperty()
-    tags = db.StringListProperty()
-
-class Messages(db.Model):
-    frmID = db.StringProperty(multiline=False)
-    toID  = db.StringProperty(multiline=False)
-    title = db.StringProperty(multiline=False)
-    contents = db.TextProperty()
-    SecClear = db.RatingProperty()
-    postDate = db.TimeProperty()
-    tags = db.StringListProperty()
-
-class MakeMap(webapp2.RequestHandler):
+class Signin(webapp2.RequestHandler):
     def get(self):
-        self.redirect('/')
-
-class UpdateMap(webapp2.RequestHandler):
-
-    def get(self):
-
-        MapChip.all()
-        self.redirect('/')
-
-
-class MainteUser(webapp.RequestHandler):
-
-    def get(self):
-        userdata =models.user().all.fetch(20)
-
-        template_values = {
-                       'name': userdata.name,
-                       'mail': userdata.mail,
-                        'nationID': userdata.nationID,
-                       'SecClear'    : userdata.SecClear,
-                       }
-
-        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
-        self.response.out.write(template.render(path, template_values))
+        if self.request.get("mode") == 'logout':
+            #cookieを破棄する
+            self.response.delete_cookie('clid')
+            self.response.delete_cookie('hash')
+            self.redirect('/')
+        return
 
     def post(self):
-        template_values = {'name':'test'}
+        if self.request.get("mode") == 'login':
 
-        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
-        self.response.out.write(template.render(path, template_values))
+            #Postがあった場合の処理
+            uid = self.request.get("userID")
+            password = self.request.get('password')
+
+            #ユーザーキー生成
+            h = hashlib.md5()
+            h.update(uid)
+            user_key = h.hexdigest()
+
+            #パスワードハッシュ値生成
+            m = hashlib.md5()
+            m.update(password)
+            passwd = m.hexdigest()
+
+            pr_user = common_models.user().get_by_id(user_key)
+            if pr_user:
+                if pr_user.password == passwd:
+
+                    client_id = str(uuid.uuid4())
+                    disp_name = pr_user.country_name
+                    max_age = 60*120
+                    pr_list = {'clid':client_id,'hash':user_key,'disp_name':disp_name}
+                    self.put_cookie(pr_list,max_age)
+
+            self.redirect('/')
+        return
+
+    def put_cookie(self,param_list,max_age):
+        for key,value in param_list.iteritems():
+            keys = key.encode('utf_8')
+            values = value.encode('utf_8')
+            myCookie = Cookie.SimpleCookie(os.environ.get( 'HTTP_COOKIE', '' ))
+            myCookie[keys] = values
+            myCookie[keys]["path"] = "/"
+            myCookie[keys]["max-age"] = max_age
+            self.response.headers.add_header('Set-Cookie', myCookie.output(header=""))
+        return
+
+class Signout(webapp.RequestHandler):
+    def get(self):
+        return
+
+    def post(self):
+        return
 
 class register(webapp2.RequestHandler):
 
@@ -114,66 +94,18 @@ class register(webapp2.RequestHandler):
         nation_name = self.request.get("Nation_name")
 
         #-----------------------------------------------------
-        newUser = models.user(key_name = uid)
+        newUser = common_models.user(key_name = uid)
         newUser.create(iname, ipassword, imail, inationID)
         newUser.put()
         #-----------------------------------------------------
-        newNation = models.Nation()
+        newNation = internal_models.Nation()
         newNation.initialize(uid, nation_name)
         newNation.put()
         #-----------------------------------------------------
         self.redirect('/game_screen')
 
-class ManageSession(webapp2.RequestHandler):
-
-    def get(self):
-        # who want to logout the system uses get method.
-        self.redirect('/')
-
-    def post(self):
-        # who want to login the system uses get method.
-        Uname = self.request.get("name")
-        Pword = self.request.get("password")
-        pr_user = models.user().get_by_key_name(Uname, None)
-
-        if Pword == pr_user.password:
-            self.session['user'] = pr_user
-            self.response.headers['Content-Type'] = 'text/plain'
-            self.response.out.write('test:%d'%models.user)
-            #self.('/game_screen')
-        else:
-            self.redirect('/')
-
-class putcookie(webapp2.RequestHandler):
-    def get(self):
-
-        now_date = datetime.datetime.now()
-        expires = now_date
-        expires = expires + datetime.timedelta(seconds=+30)
-
-        expires = expires.strftime('%a, %d-%b-%Y %H:%M:%S GMT')
-
-        client_id = self.request.cookies.get('name', '')
-        if client_id == '':
-            client_id = str(uuid.uuid4())
-            self.response.write('set new<br />')
-
-            myCookie = 'name=%s; expires=%s;' % (client_id, expires)
-            self.response.headers.add_header('Set-Cookie', myCookie )
-
-            self.response.write(myCookie)
-        else:
-            self.response.write('exist<br />')
-
-
-class getcookie(webapp2.RequestHandler):
-    def get(self):
-
-        client_id = self.request.cookies.get('name', '')
-        self.response.write(client_id)
-
 class GameScreen(webapp2.RequestHandler):
-
+#ゲームメイン画面
     def get(self):
 
         gamescreen.OverviewResp
@@ -183,43 +115,40 @@ class GameScreen(webapp2.RequestHandler):
 
 
 class SettingsScreen(webapp2.RequestHandler):
-
+#ユーザ設定用の画面
     def get(self):
-        template_values = {}
-        path = os.path.join(os.path.dirname(__file__), './templates/setting_screen.html')
+        userdata =common_models.user().all.fetch(20)
+
+        template_values = {
+                       'name': userdata.name,
+                       'mail': userdata.mail,
+                        'nationID': userdata.nationID,
+                       'SecClear'    : userdata.SecClear,
+                       }
+
+        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
+        self.response.out.write(template.render(path, template_values))
+
+    def post(self):
+        template_values = {'name':'test'}
+
+        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
         self.response.out.write(template.render(path, template_values))
 
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
-        Worldmap = MapChip.all().order('locationX').fetch(20, 0)
-        template_values = {
-                           'world' : Worldmap,
-                       }
+
+        template_values = {}
 
         path = os.path.join(os.path.dirname(__file__), './templates/index.html')
         self.response.out.write(template.render(path, template_values))
 
 
-
 app = webapp2.WSGIApplication([('/',MainPage),
-                                ('/MakeMap', MakeMap),
-                                ('/MainteUser', MainteUser),
-                                ('/register', register),
-                                ('/login', ManageSession),
-                                ('/logout', ManageSession),
+                                ('/sign-in', Signin),
+                                ('/sign-out', Signout),
+                                ('/new_user', register),
                                 ('/game_screen', GameScreen),
-                                ('/settings', SettingsScreen)
-                                ],debug=True,
-                                    config={'webapp2_extras.sessions':
-                                            {'secret_key':'my_seacret_key',     #秘密キー必須
-                                            'cookie_name':'TestSessio2n',      #セッションクッキー名
-                                            'session_max_age':360,             #セッション生存時間 (sec)
-                                            'cookie_arg':
-                                            {'max_age':None,
-                                             'domain':None,
-                                             'path':'/',
-                                             'secure':None,
-                                             'httponly':None},
-                                             'default_backend':'securecookie',  #保存先の指定
-                                             },})
+                                ('/user_setting', SettingsScreen)
+                                ],debug=True)

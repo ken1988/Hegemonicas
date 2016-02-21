@@ -1,28 +1,19 @@
 # -*- coding: utf_8 -*-
-<<<<<<< HEAD
-=======
 '''
 Created on 2015/05/07
-
+------------------------------------------------------
+国、地域の処理（内政）で使用するModelを管理
+------------------------------------------------------
 @author: ken
 '''
->>>>>>> branch 'master' of git@github.com:ken1988/Hegemonicas.git
 import random
+from google.appengine.ext import ndb
 from google.appengine.ext import db
+class World(ndb.model):
+    world_name = ndb.StringProperty(multiline=False)
 
-class user(db.Model):
-    name = db.StringProperty(multiline= False)
-    password = db.StringProperty(multiline=False)
-    mail = db.EmailProperty()
-    nationID = db.StringProperty(multiline=False)
-    SecClear = db.RatingProperty()
-
-    def create(self,Cname,Cpassword,Cmail,CnationID):
-        self.name = Cname
-        self.password = Cpassword
-        self.mail = Cmail
-        self.nationID = CnationID
-        self.SecClear = 1
+    def creation(self):
+        return
 
 class Nation(db.Model):
     ownerID = db.StringProperty(multiline=False)
@@ -62,3 +53,20 @@ class Region(db.Model):
 
     def construction(self):
         return
+
+
+class WorldMap(ndb.Model):
+    locationX = ndb.IntegerProperty()
+    locationY = ndb.IntegerProperty()
+    terra = db.StringProperty(multiline=False)
+    architect = db.StringProperty(multiline=False)
+    pop = db.IntegerProperty()
+    indpop1 = db.IntegerProperty()
+    indpop2 = db.IntegerProperty()
+    indpop3 = db.IntegerProperty()
+    poptype = db.StringProperty(multiline=False)
+    resistPoint = db.IntegerProperty()
+    navigate = db.StringProperty(multiline=False)
+    national = db.StringProperty(multiline=False)
+    return
+
