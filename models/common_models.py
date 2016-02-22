@@ -8,10 +8,10 @@ Created on 2016/01/03
 from google.appengine.ext import ndb
 
 class user(ndb.Model):
-    name = ndb.StringProperty(multiline= False)
-    password = ndb.StringProperty(multiline=False)
-    mail = ndb.StringProperty(multiline=False)
-    nationID = ndb.StringProperty(multiline=False)
+    name = ndb.StringProperty()
+    password = ndb.StringProperty()
+    mail = ndb.StringProperty()
+    nationID = ndb.StringProperty()
     SecClear = ndb.IntegerProperty()
 
     def create(self,Cname,Cpassword,Cmail,CnationID):
@@ -21,10 +21,12 @@ class user(ndb.Model):
         self.nationID = CnationID
         self.SecClear = 1
 
-class Terrain(ndb.model):
-    return
+class Terrain(ndb.Model):
+    terrain = ndb.StringProperty()
+    temperture = ndb.IntegerProperty()
 
-class Architect(ndb.model):
-    return
+class Architect(ndb.Model):
+    owner = ndb.StringProperty()
 
-class Unit(ndb.model):
+class Unit(ndb.Model):
+    owner = ndb.StringProperty()

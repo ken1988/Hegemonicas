@@ -53,7 +53,7 @@ class Signin(webapp2.RequestHandler):
                     pr_list = {'clid':client_id,'hash':user_key,'disp_name':disp_name}
                     self.put_cookie(pr_list,max_age)
 
-            self.redirect('/')
+            self.redirect('/game_screen')
         return
 
     def put_cookie(self,param_list,max_age):

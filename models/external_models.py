@@ -11,10 +11,10 @@ import os
 from google.appengine.ext import db
 
 class BBSmessages(db.Model):
-    orgID = db.StringProperty(multiline=False)
-    frmID = db.StringProperty(multiline=False)
-    parentsID = db.StringProperty(multiline=False)
-    title = db.StringProperty(multiline=False)
+    orgID = db.StringProperty()
+    frmID = db.StringProperty()
+    parentsID = db.StringProperty()
+    title = db.StringProperty()
     contents = db.TextProperty()
     SecClear = db.RatingProperty()
     postDate = db.TimeProperty()
@@ -22,16 +22,16 @@ class BBSmessages(db.Model):
 
 
 class Messages(db.Model):
-    frmID = db.StringProperty(multiline=False)
-    toID  = db.StringProperty(multiline=False)
-    title = db.StringProperty(multiline=False)
+    frmID = db.StringProperty()
+    toID  = db.StringProperty()
+    title = db.StringProperty()
     contents = db.TextProperty()
     SecClear = db.RatingProperty()
     postDate = db.TimeProperty()
     tags = db.StringListProperty()
 
 class news(db.Model):
-    nationID = db.StringProperty(multiline=False)
+    nationID = db.StringProperty()
     contents = db.TextProperty()
     postDate = db.DateTimeProperty()
     location = db.StringListProperty()

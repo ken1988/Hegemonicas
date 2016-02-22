@@ -6,22 +6,21 @@ Created on 2015/05/07
 ------------------------------------------------------
 @author: ken
 '''
-import random
+import random
 from google.appengine.ext import ndb
-from google.appengine.ext import db
-class World(ndb.model):
-    world_name = ndb.StringProperty(multiline=False)
+class World(ndb.Model):
+    world_name = ndb.StringProperty()
 
     def creation(self):
         return
 
-class Nation(db.Model):
-    ownerID = db.StringProperty(multiline=False)
-    orgID = db.StringProperty(multiline=False)
-    Nation_Name = db.StringProperty(multiline=False)
-    basicData = db.StringListProperty()
-    materialData = db.StringListProperty()
-    policyData = db.StringListProperty()
+class Nation(ndb.Model):
+    ownerID = ndb.StringProperty()
+    orgID = ndb.StringProperty()
+    Nation_Name = ndb.StringProperty()
+    basicData = ndb.StringProperty(repeated = True)
+    materialData = ndb.StringProperty(repeated = True)
+    policyData = ndb.StringProperty(repeated = True)
 
     def initialize(self,uid,nation_name):
         self.ownerID = uid
@@ -33,13 +32,13 @@ class Nation(db.Model):
     def startRegion(self):
         return
 
-class Region(db.Model):
-    regionID = db.StringProperty(multiline=False)
-    nationID = db.StringProperty(multiline=False)
-    region_name = db.StringProperty(multiline=False)
-    region_pop = db.StringListProperty()
-    region_product = db.StringListProperty()
-    region_consume = db.StringListProperty()
+class Region(ndb.Model):
+    regionID = ndb.StringProperty()
+    nationID = ndb.StringProperty()
+    region_name = ndb.StringProperty()
+    region_pop = ndb.StringProperty(repeated = True)
+    region_product = ndb.StringProperty(repeated = True)
+    region_consume = ndb.StringProperty(repeated = True)
 
     def get(self):
         return
@@ -58,15 +57,14 @@ class Region(db.Model):
 class WorldMap(ndb.Model):
     locationX = ndb.IntegerProperty()
     locationY = ndb.IntegerProperty()
-    terra = db.StringProperty(multiline=False)
-    architect = db.StringProperty(multiline=False)
-    pop = db.IntegerProperty()
-    indpop1 = db.IntegerProperty()
-    indpop2 = db.IntegerProperty()
-    indpop3 = db.IntegerProperty()
-    poptype = db.StringProperty(multiline=False)
-    resistPoint = db.IntegerProperty()
-    navigate = db.StringProperty(multiline=False)
-    national = db.StringProperty(multiline=False)
-    return
+    terra = ndb.StringProperty()
+    architect = ndb.StringProperty()
+    pop = ndb.IntegerProperty()
+    indpop1 = ndb.IntegerProperty()
+    indpop2 = ndb.IntegerProperty()
+    indpop3 = ndb.IntegerProperty()
+    poptype = ndb.StringProperty()
+    resistPoint = ndb.IntegerProperty()
+    navigate = ndb.StringProperty()
+    national = ndb.StringProperty()
 
