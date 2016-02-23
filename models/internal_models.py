@@ -10,14 +10,23 @@ import random
 from google.appengine.ext import ndb
 class World(ndb.Model):
     world_name = ndb.StringProperty()
+    ownerID = ndb.KeyProperty()
+    year = ndb.IntegerProperty()
+    month = ndb.IntegerProperty()
+    turn = ndb.IntegerProperty()
+    nations = ndb.KeyProperty(repeated = True)
 
     def creation(self):
         return
 
 class Nation(ndb.Model):
-    ownerID = ndb.StringProperty()
-    orgID = ndb.StringProperty()
+    ownerID = ndb.KeyProperty()
+    worldID = ndb.KeyProperty()
+    orgID = ndb.KeyProperty()
+    regions = ndb.KeyProperty()
+    SecClear =ndb.StringProperty()
     Nation_Name = ndb.StringProperty()
+    Projectque = ndb.KeyProperty(repeted = True)
     basicData = ndb.StringProperty(repeated = True)
     materialData = ndb.StringProperty(repeated = True)
     policyData = ndb.StringProperty(repeated = True)
@@ -32,9 +41,17 @@ class Nation(ndb.Model):
     def startRegion(self):
         return
 
+class Project(ndb.Model):
+    project_name = ndb.StringProperty()
+    target_region = ndb.StringProperty()
+    target_X = ndb.IntegerProperty()
+    target_Y = ndb.IntegerProperty()
+    input = ndb.StringProperty(repeated = True)
+    output = ndb.StringProperty()
+    est_Trun  = ndb.IntegerProperty()
+
 class Region(ndb.Model):
-    regionID = ndb.StringProperty()
-    nationID = ndb.StringProperty()
+    nationID = ndb.KeyProperty()
     region_name = ndb.StringProperty()
     region_pop = ndb.StringProperty(repeated = True)
     region_product = ndb.StringProperty(repeated = True)
