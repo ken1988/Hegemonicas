@@ -17,7 +17,23 @@ from google.appengine.ext import webapp
 from webapp2_extras import sessions
 from webapp2_extras import auth
 
+class Common_Handler(webapp2.RequestHandler):
+    def display(self,tTitle,tURL,templates):
+    #tTitle: ページタイトル
+    #tURL: 使用するテンプレートURL
+    #templates: コンテンツ内Item
+
+        template_values = {"Ptitle": tTitle}
+        path = os.path.join(os.path.dirname(__file__), './templates/common_header.html')
+        header_html = template.render(path,template_values)
+
+        templates['Common_Header'] = header_html
+        path = os.path.join(os.path.dirname(__file__), './templates/'+tURL)
+        self.response.out.write(template.render(path, templates))
+
 class Signin(webapp2.RequestHandler):
+#ログアウト時はsign-inへgetモードでアクセスする
+
     def get(self):
         if self.request.get("mode") == 'logout':
             #cookieを破棄する
@@ -27,6 +43,8 @@ class Signin(webapp2.RequestHandler):
         return
 
     def post(self):
+#ログイン時はsign-inへpostモードでアクセスする
+
         if self.request.get("mode") == 'login':
 
             #Postがあった場合の処理
@@ -48,7 +66,7 @@ class Signin(webapp2.RequestHandler):
                 if pr_user.password == passwd:
 
                     client_id = str(uuid.uuid4())
-                    disp_name = pr_user.country_name
+                    disp_name = pr_user.name
                     max_age = 60*120
                     pr_list = {'clid':client_id,'hash':user_key,'disp_name':disp_name}
                     self.put_cookie(pr_list,max_age)
@@ -67,12 +85,41 @@ class Signin(webapp2.RequestHandler):
             self.response.headers.add_header('Set-Cookie', myCookie.output(header=""))
         return
 
-class Signout(webapp.RequestHandler):
+class GameScreen(Common_Handler):
+#ゲームメイン画面
+    def get(self):
+        gamescreen.OverviewResp
+
+        templates = {}
+        self.display('ゲーム画面','game_screen.html',templates)
+
+class UserScreen(webapp2.RedirectHandler):
+#ユーザメイン画面
+#ログイン後、いったんユーザメイン画面に入り各ワールドへ遷移する
+
     def get(self):
         return
 
     def post(self):
         return
+
+class SettingsScreen(Common_Handler):
+#ユーザ設定用の画面
+    def get(self):
+        userdata =common_models.user().all.fetch(20)
+
+        templates = {
+                       'name': userdata.name,
+                       'mail': userdata.mail,
+                    }
+
+        self.display('ユーザ設定画面','profile.html',templates)
+
+    def post(self):
+        template_values = {'name':'test'}
+
+        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
+        self.response.out.write(template.render(path, template_values))
 
 class register(webapp2.RequestHandler):
 
@@ -104,51 +151,16 @@ class register(webapp2.RequestHandler):
         #-----------------------------------------------------
         self.redirect('/game_screen')
 
-class GameScreen(webapp2.RequestHandler):
-#ゲームメイン画面
-    def get(self):
-
-        gamescreen.OverviewResp
-        template_values = {}
-        path = os.path.join(os.path.dirname(__file__), './templates/game_screen.html')
-        self.response.out.write(template.render(path, template_values))
-
-
-class SettingsScreen(webapp2.RequestHandler):
-#ユーザ設定用の画面
-    def get(self):
-        userdata =common_models.user().all.fetch(20)
-
-        template_values = {
-                       'name': userdata.name,
-                       'mail': userdata.mail,
-                        'nationID': userdata.nationID,
-                       'SecClear'    : userdata.SecClear,
-                       }
-
-        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
-        self.response.out.write(template.render(path, template_values))
-
-    def post(self):
-        template_values = {'name':'test'}
-
-        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
-        self.response.out.write(template.render(path, template_values))
-
-class MainPage(webapp2.RequestHandler):
+class MainPage(Common_Handler):
 
     def get(self):
-
-        template_values = {}
-
-        path = os.path.join(os.path.dirname(__file__), './templates/index.html')
-        self.response.out.write(template.render(path, template_values))
-
+        templates = {}
+        self.display('メインページ','index.html',templates)
 
 app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/sign-in', Signin),
-                                ('/sign-out', Signout),
                                 ('/new_user', register),
                                 ('/game_screen', GameScreen),
+                                ('/user_screen', UserScreen),
                                 ('/user_setting', SettingsScreen)
                                 ],debug=True)

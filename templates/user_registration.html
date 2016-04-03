@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+		<form action="/register" method="post">
+			<label for="e-mail">メールアドレス：</label>
+			<input name="e-mail" type="email" required="required"><br>
+			<label for="uid">ユーザID：</label>
+			<input name="uid" type="text"  required><br>
+			<label for="name">ユーザ名：</label>
+			<input name="name" type="text"  required><br>
+			<label for="name">国名：</label>
+			<input name="Nation_name" type="text"  required><br>
+			<label for="password">パスワード：</label>
+			<input name="password" type="password"  required><br>
+			<label for="Confpass">パスワード確認：</label>
+			<input name="Confpass" type="password"  required><br>
+			<input type="hidden" name="phase" id="phase" value=1>
+			<input type="submit" value="送信">
+		</form>
+</body>
+</html>
