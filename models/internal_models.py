@@ -26,7 +26,7 @@ class Nation(ndb.Model):
     regions = ndb.KeyProperty()
     SecClear =ndb.StringProperty()
     Nation_Name = ndb.StringProperty()
-    Projectque = ndb.KeyProperty(repeted = True)
+    Projectque = ndb.KeyProperty(repeated = True)
     basicData = ndb.StringProperty(repeated = True)
     materialData = ndb.StringProperty(repeated = True)
     policyData = ndb.StringProperty(repeated = True)
