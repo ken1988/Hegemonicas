@@ -85,3 +85,13 @@ class WorldMap(ndb.Model):
     navigate = ndb.StringProperty()
     national = ndb.StringProperty()
 
+class Terrain(ndb.Model):
+    terrain = ndb.StringProperty()
+    temperture = ndb.IntegerProperty()
+
+class Architect(ndb.Model):
+    owner = ndb.StringProperty()
+
+class Unit(ndb.Model):
+    owner = ndb.StringProperty()
+

@@ -11,22 +11,9 @@ class user(ndb.Model):
     name = ndb.StringProperty()
     password = ndb.StringProperty()
     mail = ndb.StringProperty()
-    nationID = ndb.StringProperty()
-    SecClear = ndb.IntegerProperty()
+    nationID = ndb.KeyProperty(repeated = True)
 
-    def create(self,Cname,Cpassword,Cmail,CnationID):
+    def create(self,Cname,Cpassword,Cmail):
         self.name = Cname
         self.password = Cpassword
         self.mail = Cmail
-        self.nationID = CnationID
-        self.SecClear = 1
-
-class Terrain(ndb.Model):
-    terrain = ndb.StringProperty()
-    temperture = ndb.IntegerProperty()
-
-class Architect(ndb.Model):
-    owner = ndb.StringProperty()
-
-class Unit(ndb.Model):
-    owner = ndb.StringProperty()
