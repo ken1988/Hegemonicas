@@ -4,18 +4,15 @@ import webapp2
 import os
 import csv
 import uuid
-from models import external_models
 import gamescreen
 import datetime
 from models import internal_models
 from models import common_models
+from models import external_models
 import Cookie
 import hashlib
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
-from google.appengine.ext import webapp
-from webapp2_extras import sessions
-from webapp2_extras import auth
 
 class Common_Handler(webapp2.RequestHandler):
     def display(self,tTitle,tURL,templates):
@@ -33,7 +30,6 @@ class Common_Handler(webapp2.RequestHandler):
 
 class Signin(webapp2.RequestHandler):
 #ログアウト時はsign-inへgetモードでアクセスする
-
     def get(self):
         if self.request.get("mode") == 'logout':
             #cookieを破棄する
@@ -70,8 +66,9 @@ class Signin(webapp2.RequestHandler):
                     max_age = 60*120
                     pr_list = {'clid':client_id,'hash':user_key,'disp_name':disp_name}
                     self.put_cookie(pr_list,max_age)
-
-            self.redirect('/user_screen')
+                self.redirect('/user_screen')
+            else:
+                self.redirect('/')
         return
 
     def put_cookie(self,param_list,max_age):

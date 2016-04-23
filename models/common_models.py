@@ -12,4 +12,3 @@ class user(ndb.Model):
     password = ndb.StringProperty()
     mail = ndb.StringProperty()
     nationID = ndb.KeyProperty(repeated = True)
-
