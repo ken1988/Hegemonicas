@@ -71,7 +71,7 @@ class Signin(webapp2.RequestHandler):
                     pr_list = {'clid':client_id,'hash':user_key,'disp_name':disp_name}
                     self.put_cookie(pr_list,max_age)
 
-            self.redirect('/game_screen')
+            self.redirect('/user_screen')
         return
 
     def put_cookie(self,param_list,max_age):
@@ -93,12 +93,15 @@ class GameScreen(Common_Handler):
         templates = {}
         self.display('ゲーム画面','game_screen.html',templates)
 
-class UserScreen(webapp2.RedirectHandler):
+class UserScreen(Common_Handler):
 #ユーザメイン画面
 #ログイン後、いったんユーザメイン画面に入り各ワールドへ遷移する
 
     def get(self):
-        return
+        uid = self.request.cookies.get('hash', '')
+        user_data = common_models.user.get_by_id(uid)
+        templates = {"user": user_data}
+        self.display('ユーザ画面','user_screen.html',templates)
 
     def post(self):
         return
@@ -121,35 +124,37 @@ class SettingsScreen(Common_Handler):
         path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
         self.response.out.write(template.render(path, template_values))
 
-class register(webapp2.RequestHandler):
+class User_Regi(Common_Handler):
 
     def get(self):
         #get => 登録画面への初回アクセス。特に何も処理しない。
-        template_values = {
-                           'phase': 1
-                           }
-        path = os.path.join(os.path.dirname(__file__), './templates/register.html')
-        self.response.out.write(template.render(path, template_values))
+        template_values = {}
+        self.display('ユーザ登録画面','user_registration.html',template_values)
 
     def post(self):
         #post => 登録画面へのデータ送信。入力チェックと確認画面の表示、DBへの登録。
         uid = self.request.get("uid")
         iname = self.request.get("name")
-        ipassword = self.request.get("password")
-        imail = self.request.get("e-mail")
-        inationID = self.request.get("uid")
-        nation_name = self.request.get("Nation_name")
+        passstr = self.request.get("password")
 
-        #-----------------------------------------------------
-        newUser = common_models.user(key_name = uid)
-        newUser.create(iname, ipassword, imail, inationID)
-        newUser.put()
-        #-----------------------------------------------------
-        newNation = internal_models.Nation()
-        newNation.initialize(uid, nation_name)
-        newNation.put()
-        #-----------------------------------------------------
-        self.redirect('/game_screen')
+        #パスワードハッシュ値生成
+        m = hashlib.md5()
+        m.update(passstr)
+        password = m.hexdigest()
+
+        #メールアドレスハッシュ値生成
+        h = hashlib.md5()
+        h.update(uid)
+        user_key = h.hexdigest()
+
+        #ユーザオブジェクト登録
+        new_user = common_models.user(id = user_key)
+        new_user.mail = uid
+        new_user.name = iname
+        new_user.password = password
+        new_user.put()
+
+        self.redirect('/user_screen')
 
 class MainPage(Common_Handler):
 
@@ -159,7 +164,7 @@ class MainPage(Common_Handler):
 
 app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/sign-in', Signin),
-                                ('/new_user', register),
+                                ('/new_user', User_Regi),
                                 ('/game_screen', GameScreen),
                                 ('/user_screen', UserScreen),
                                 ('/user_setting', SettingsScreen)

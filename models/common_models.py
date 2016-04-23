@@ -13,7 +13,3 @@ class user(ndb.Model):
     mail = ndb.StringProperty()
     nationID = ndb.KeyProperty(repeated = True)
 
-    def create(self,Cname,Cpassword,Cmail):
-        self.name = Cname
-        self.password = Cpassword
-        self.mail = Cmail

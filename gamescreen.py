@@ -14,5 +14,5 @@ class OverviewResp():
     classdocs
     '''
     def get(self):
-        internal_models.Nation.get_by_key_name("test2", None)
+
         return
