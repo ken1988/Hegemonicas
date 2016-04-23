@@ -28,7 +28,13 @@ class Common_Handler(webapp2.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), './templates/'+tURL)
         self.response.out.write(template.render(path, templates))
 
-class Signin(webapp2.RequestHandler):
+    def makeHash(self,source):
+        h = hashlib.md5()
+        h.update(source)
+        return_key = h.hexdigest()
+        return return_key
+
+class Signin(Common_Handler):
 #ログアウト時はsign-inへgetモードでアクセスする
     def get(self):
         if self.request.get("mode") == 'logout':
@@ -44,42 +50,35 @@ class Signin(webapp2.RequestHandler):
         if self.request.get("mode") == 'login':
 
             #Postがあった場合の処理
-            uid = self.request.get("userID")
-            password = self.request.get('password')
-
-            #ユーザーキー生成
-            h = hashlib.md5()
-            h.update(uid)
-            user_key = h.hexdigest()
-
-            #パスワードハッシュ値生成
-            m = hashlib.md5()
-            m.update(password)
-            passwd = m.hexdigest()
+            #ユーザーキー、パスワードハッシュ生成
+            user_key = self.makeHash(self.request.get("userID"))
+            passwd = self.makeHash(self.request.get('password'))
 
             pr_user = common_models.user().get_by_id(user_key)
             if pr_user:
                 if pr_user.password == passwd:
 
                     client_id = str(uuid.uuid4())
-                    disp_name = pr_user.name
                     max_age = 60*120
-                    pr_list = {'clid':client_id,'hash':user_key,'disp_name':disp_name}
+                    pr_list = {'clid':client_id,'hash':user_key}
                     self.put_cookie(pr_list,max_age)
                 self.redirect('/user_screen')
             else:
                 self.redirect('/')
+
         return
 
     def put_cookie(self,param_list,max_age):
         for key,value in param_list.iteritems():
+
             keys = key.encode('utf_8')
             values = value.encode('utf_8')
-            myCookie = Cookie.SimpleCookie(os.environ.get( 'HTTP_COOKIE', '' ))
+            myCookie = Cookie.SimpleCookie(os.environ.get('HTTP_COOKIE', ''))
             myCookie[keys] = values
             myCookie[keys]["path"] = "/"
             myCookie[keys]["max-age"] = max_age
             self.response.headers.add_header('Set-Cookie', myCookie.output(header=""))
+
         return
 
 class GameScreen(Common_Handler):
@@ -134,15 +133,9 @@ class User_Regi(Common_Handler):
         iname = self.request.get("name")
         passstr = self.request.get("password")
 
-        #パスワードハッシュ値生成
-        m = hashlib.md5()
-        m.update(passstr)
-        password = m.hexdigest()
-
-        #メールアドレスハッシュ値生成
-        h = hashlib.md5()
-        h.update(uid)
-        user_key = h.hexdigest()
+        #パスワード,メールアドレスハッシュ生成
+        password = self.makeHash(passstr)
+        user_key = self.makeHash(uid)
 
         #ユーザオブジェクト登録
         new_user = common_models.user(id = user_key)
