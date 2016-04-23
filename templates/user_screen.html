@@ -14,7 +14,16 @@
 </div>
 <div>
 <h1>ワールド選択</h1>
-<input type="button" name="new_world" id="new_world" value="ワールドを創る">
+{% for world in worlds %}
+<div id="{{ world.id }}">
+{{ world.world_name }}
+</div>
+{% endfor %}
+
+<form action="/new_world" method="get">
+<input type="hidden" name="creator" id="creator" value={{ user.name }}>
+<input type="submit" name="new_world" id="new_world" value="ワールドを創る">
+</form>
 </div>
 </div>
 </body>

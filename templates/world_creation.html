@@ -1,0 +1,17 @@
+{{ Common_Header }}
+</head>
+</head>
+<body>
+<form action="/new_world" method="post">
+	<label for="wname">ワールド名：</label>
+	<input name="wname" type="text"  required><br>
+	<label for="Max_nation">最大国数：</label>
+	<input name="Max_nation" type="text" required><br>
+	<label for="Max_turn">最大ターン：</label>
+	<input name="Max_turn" type="text" required><br>
+	<label for="Max_turn">創造者：</label>
+	<input type="text" name="creator" id="creator" value={{ creator }}><br>
+	<input type="submit" value="送信">
+</form>
+</body>
+</html>

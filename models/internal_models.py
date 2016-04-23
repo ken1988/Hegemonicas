@@ -8,16 +8,7 @@ Created on 2015/05/07
 '''
 import random
 from google.appengine.ext import ndb
-class World(ndb.Model):
-    world_name = ndb.StringProperty()
-    ownerID = ndb.KeyProperty()
-    year = ndb.IntegerProperty()
-    month = ndb.IntegerProperty()
-    turn = ndb.IntegerProperty()
-    nations = ndb.KeyProperty(repeated = True)
 
-    def creation(self):
-        return
 
 class Nation(ndb.Model):
     ownerID = ndb.KeyProperty()

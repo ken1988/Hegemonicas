@@ -96,7 +96,10 @@ class UserScreen(Common_Handler):
     def get(self):
         uid = self.request.cookies.get('hash', '')
         user_data = common_models.user.get_by_id(uid)
-        templates = {"user": user_data}
+        worlds = common_models.World().query(common_models.World.available == True)
+
+        templates = {"user": user_data,
+                     "worlds":worlds}
         self.display('ユーザ画面','user_screen.html',templates)
 
     def post(self):
@@ -146,6 +149,25 @@ class User_Regi(Common_Handler):
 
         self.redirect('/user_screen')
 
+class NewWorld(Common_Handler):
+
+    def get(self):
+        #get => 登録画面への初回アクセス。
+        template_values = {"creator": self.request.get("creator")}
+        self.display('ワールド作成画面','world_creation.html',template_values)
+        return
+
+    def post(self):
+        wname = self.request.get("wname")
+        wcreator = self.request.get("creator")
+        wMax_nat = int(self.request.get("Max_nation"))
+        wMax_turn = int(self.request.get("Max_turn"))
+        new_world = common_models.World()
+        new_world.creation(wname, wcreator, wMax_nat, wMax_turn)
+
+        self.redirect('/user_screen')
+        return
+
 class MainPage(Common_Handler):
 
     def get(self):
@@ -157,5 +179,6 @@ app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/new_user', User_Regi),
                                 ('/game_screen', GameScreen),
                                 ('/user_screen', UserScreen),
-                                ('/user_setting', SettingsScreen)
+                                ('/user_setting', SettingsScreen),
+                                ('/new_world', NewWorld),
                                 ],debug=True)
