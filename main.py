@@ -23,8 +23,11 @@ class Common_Handler(webapp2.RequestHandler):
         template_values = {"Ptitle": tTitle}
         path = os.path.join(os.path.dirname(__file__), './templates/common_header.html')
         header_html = template.render(path,template_values)
+        path = os.path.join(os.path.dirname(__file__), './templates/common_footer.html')
+        footer_html = template.render(path,template_values)
 
         templates['Common_Header'] = header_html
+        templates['Common_Footer'] = footer_html
         path = os.path.join(os.path.dirname(__file__), './templates/'+tURL)
         self.response.out.write(template.render(path, templates))
 
