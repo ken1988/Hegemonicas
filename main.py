@@ -13,6 +13,7 @@ import Cookie
 import hashlib
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
+from __builtin__ import True
 
 class Common_Handler(webapp2.RequestHandler):
     def display(self,tTitle,tURL,templates):
@@ -99,32 +100,29 @@ class UserScreen(Common_Handler):
     def get(self):
         uid = self.request.cookies.get('hash', '')
         user_data = common_models.user.get_by_id(uid)
-        worlds = common_models.World().query(common_models.World.available == True)
+        Joined_world = user_data.worldID
+        Available_world = common_models.World().query(common_models.World.available == True).fetch(keys_only=True)
 
-        templates = {"user": user_data,
-                     "worlds":worlds}
+        worlds_a = []
+        worlds_b = []
+        for world_key in Available_world:
+            if world_key in Joined_world:
+                Available_world.remove(world_key.id())
+            worlds_a.append(common_models.World().get_by_id(world_key.id()))
+
+        for world_key in Joined_world:
+            worlds_b.append(common_models.World().get_by_id(world_key.id()))
+
+        templates = {
+                     "user": user_data,
+                     "worlds_a":worlds_a,
+                     "worlds_j":worlds_b,
+                     }
+
         self.display('ユーザ画面','user_screen.html',templates)
 
     def post(self):
         return
-
-class SettingsScreen(Common_Handler):
-#ユーザ設定用の画面
-    def get(self):
-        userdata =common_models.user().all.fetch(20)
-
-        templates = {
-                       'name': userdata.name,
-                       'mail': userdata.mail,
-                    }
-
-        self.display('ユーザ設定画面','profile.html',templates)
-
-    def post(self):
-        template_values = {'name':'test'}
-
-        path = os.path.join(os.path.dirname(__file__), './templates/profile.html')
-        self.response.out.write(template.render(path, template_values))
 
 class User_Regi(Common_Handler):
 
@@ -151,6 +149,14 @@ class User_Regi(Common_Handler):
         new_user.put()
 
         self.redirect('/user_screen')
+
+class JoinWorld(Common_Handler):
+
+    def get(self):
+        return
+
+    def post(self):
+        return
 
 class NewWorld(Common_Handler):
 
@@ -181,7 +187,7 @@ app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/sign-in', Signin),
                                 ('/new_user', User_Regi),
                                 ('/game_screen', GameScreen),
+                                ('/join_world', JoinWorld),
                                 ('/user_screen', UserScreen),
-                                ('/user_setting', SettingsScreen),
                                 ('/new_world', NewWorld),
                                 ],debug=True)

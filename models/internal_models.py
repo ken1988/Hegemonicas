@@ -14,7 +14,7 @@ class Nation(ndb.Model):
     ownerID = ndb.KeyProperty()
     worldID = ndb.KeyProperty()
     orgID = ndb.KeyProperty()
-    regions = ndb.KeyProperty()
+    region = ndb.KeyProperty(repeated = True)
     SecClear =ndb.StringProperty()
     Nation_Name = ndb.StringProperty()
     Projectque = ndb.KeyProperty(repeated = True)

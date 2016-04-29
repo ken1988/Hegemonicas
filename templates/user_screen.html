@@ -14,12 +14,32 @@
 </div>
 <div>
 <h1>ワールド選択</h1>
-{% for world in worlds %}
-<div id="{{ world.id }}">
-{{ world.world_name }}
+<h2>参加可能済みのワールド</h2>
+{% for world in worlds_b %}
+<div id="{{ world.0 }}" class="world_icon">
+<img src="/img/Planet.jpg" alt="world_image">
+<a href="/game_screen?world={{ world.id }}">{{ world.world_name }}</a>
+<ul>
+<li>{{ world.turn }}ターン/{{ world.Max_turn }}ターン</li>
+<li>{{ world.year }}年{{ world.month }}月</li>
+</ul>
 </div>
 {% endfor %}
-
+<h2>参加可能なワールド</h2>
+{% for world in worlds_a %}
+<div id="{{ world.key.id }}" class="world_icon">
+<h3>{{ world.world_name }}</h3>
+<img src="/img/Planet.jpg" alt="world_image">
+<form action="/join_world" method="get">
+<input type="hidden" name="tjoin" id="tjoin" value={{ world.key.id }}>
+<input type="submit" name="join" id="join" value="ワールドに参加する">
+</form>
+<ul>
+<li>{{ world.turn }}ターン/{{ world.Max_turn }}ターン</li>
+<li>{{ world.year }}年{{ world.month }}月</li>
+</ul>
+</div>
+{% endfor %}
 <form action="/new_world" method="get">
 <input type="hidden" name="creator" id="creator" value={{ user.name }}>
 <input type="submit" name="new_world" id="new_world" value="ワールドを創る">

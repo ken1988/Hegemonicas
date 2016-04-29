@@ -12,6 +12,7 @@ class user(ndb.Model):
     name = ndb.StringProperty()
     password = ndb.StringProperty()
     mail = ndb.StringProperty()
+    worldID = ndb.KeyProperty(repeated = True)
     nationID = ndb.KeyProperty(repeated = True)
 
 class World(ndb.Model):
@@ -23,14 +24,17 @@ class World(ndb.Model):
     Max_nation = ndb.IntegerProperty()
     Max_turn = ndb.IntegerProperty()
     available = ndb.BooleanProperty()
+    Numnations = ndb.IntegerProperty()
     nations = ndb.KeyProperty(repeated = True)
 
     def creation(self,wname,wcreator,wMax_nat,wMax_turn):
+        #新規作成
         self.world_name = wname
         self.wcreator = wcreator
         self.Max_nation = wMax_nat
         self.Max_turn = wMax_turn
         self.available = True
+        self.Numnations = 0
 
         #日付の初期設定
         self.year = 1
@@ -38,4 +42,13 @@ class World(ndb.Model):
         self.month = 1
 
         self.put()
+        return
+
+    def check_join(self,nkey):
+        #参加可否チェック
+
+        if self.Numnations + 1 == self.Max_nation:
+            self.nations.append(nkey)
+            self.available = False
+
         return

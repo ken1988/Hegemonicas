@@ -10,6 +10,7 @@ import random
 import webapp2
 import os
 from google.appengine.ext import db
+from google.appengine.ext import ndb
 
 class BBSmessages(db.Model):
     orgID = db.StringProperty()
@@ -20,7 +21,6 @@ class BBSmessages(db.Model):
     SecClear = db.RatingProperty()
     postDate = db.TimeProperty()
     tags = db.StringListProperty()
-
 
 class Messages(db.Model):
     frmID = db.StringProperty()
