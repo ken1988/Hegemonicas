@@ -15,6 +15,12 @@ class user(ndb.Model):
     worldID = ndb.KeyProperty(repeated = True)
     nationID = ndb.KeyProperty(repeated = True)
 
+    def join_to_world(self, world_id,nation_id):
+        self.worldID.append(world_id)
+        self.nationID.append(nation_id)
+        self.put()
+        return
+
 class World(ndb.Model):
     world_name = ndb.StringProperty()
     wcreator = ndb.StringProperty()

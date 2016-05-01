@@ -8,7 +8,7 @@ import gamescreen
 import datetime
 from models import internal_models
 from models import common_models
-from models import external_models
+
 import Cookie
 import hashlib
 from google.appengine.ext import db
@@ -101,22 +101,27 @@ class UserScreen(Common_Handler):
         uid = self.request.cookies.get('hash', '')
         user_data = common_models.user.get_by_id(uid)
         Joined_world = user_data.worldID
+        Joined_nation = user_data.nationID
         Available_world = common_models.World().query(common_models.World.available == True).fetch(keys_only=True)
 
         worlds_a = []
         worlds_b = []
+        nations_data = []
         for world_key in Available_world:
-            if world_key in Joined_world:
-                Available_world.remove(world_key.id())
-            worlds_a.append(common_models.World().get_by_id(world_key.id()))
+            if not world_key in Joined_world:
+                worlds_a.append(common_models.World().get_by_id(world_key.id()))
 
         for world_key in Joined_world:
             worlds_b.append(common_models.World().get_by_id(world_key.id()))
 
+        for nation_key in Joined_nation:
+            nations_data.append(internal_models.Nation.get_by_id(nation_key.id()))
+
+        joined_list = zip(worlds_b,nations_data)
         templates = {
                      "user": user_data,
                      "worlds_a":worlds_a,
-                     "worlds_j":worlds_b,
+                     "joined_list":joined_list
                      }
 
         self.display('ユーザ画面','user_screen.html',templates)
@@ -169,6 +174,7 @@ class JoinWorld(Common_Handler):
         new_nation = internal_models.Nation()
         new_key = new_nation.creation(owner.key, tworld.key, nation_name)
 
+        owner.join_to_world(tworld.key,new_key)
         tworld.join(new_key)
         self.redirect('/user_screen')
         return
