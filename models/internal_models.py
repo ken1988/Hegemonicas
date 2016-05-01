@@ -7,9 +7,7 @@ Created on 2015/05/07
 @author: ken
 '''
 import random
-from google.appengine.ext import ndb
-
-
+from google.appengine.ext import ndb
 class Nation(ndb.Model):
     ownerID = ndb.KeyProperty()
     worldID = ndb.KeyProperty()
@@ -22,9 +20,12 @@ class Nation(ndb.Model):
     materialData = ndb.StringProperty(repeated = True)
     policyData = ndb.StringProperty(repeated = True)
 
-    def initialize(self,uid,nation_name):
+    def creation(self,uid,world_id,nation_name):
         self.ownerID = uid
+        self.worldID = world_id
         self.Nation_Name = nation_name
+        self.put()
+        return self.key
 
     def getNation(self):
         return

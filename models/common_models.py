@@ -44,11 +44,15 @@ class World(ndb.Model):
         self.put()
         return
 
-    def check_join(self,nkey):
-        #参加可否チェック
-
+    def join(self, nation_id):
+        self.nations.append(nation_id)
+        self.Numnations = self.Numnations + 1
         if self.Numnations + 1 == self.Max_nation:
-            self.nations.append(nkey)
-            self.available = False
+            self.update_avst()
 
+        self.put()
+        return
+
+    def update_avst(self):
+        self.available = False
         return

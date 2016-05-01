@@ -153,9 +153,24 @@ class User_Regi(Common_Handler):
 class JoinWorld(Common_Handler):
 
     def get(self):
+        #get => 登録画面への初回アクセス。
+        tWorld = common_models.World().get_by_id(int(self.request.get("world_key")))
+        template_values = {"world_name": tWorld.world_name,
+                           "world_key": self.request.get("world_key")}
+        self.display('ワールド作成画面','nation_registration.html',template_values)
         return
 
     def post(self):
+        uid = self.request.cookies.get('hash', '')
+        nation_name = self.request.get("nation_name")
+        owner = common_models.user().get_by_id(uid)
+        tworld = common_models.World().get_by_id(int(self.request.get("world_key")))
+
+        new_nation = internal_models.Nation()
+        new_key = new_nation.creation(owner.key, tworld.key, nation_name)
+
+        tworld.join(new_key)
+        self.redirect('/user_screen')
         return
 
 class NewWorld(Common_Handler):

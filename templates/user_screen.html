@@ -31,8 +31,8 @@
 <h3>{{ world.world_name }}</h3>
 <img src="/img/Planet.jpg" alt="world_image">
 <form action="/join_world" method="get">
-<input type="hidden" name="tjoin" id="tjoin" value={{ world.key.id }}>
-<input type="submit" name="join" id="join" value="ワールドに参加する">
+<input type="hidden" name="world_key" id="world_key" value={{ world.key.id }}>
+<input type="submit" name="req_type" id="req_type" value="ワールドに参加する">
 </form>
 <ul>
 <li>{{ world.turn }}ターン/{{ world.Max_turn }}ターン</li>

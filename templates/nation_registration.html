@@ -1,0 +1,19 @@
+{{ Common_Header }}
+</head>
+<body>
+<header>
+		<h1><img src="/img/logo.png" alt="Hegemonicas"></h1>
+		<nav class="header-nav">
+
+		</nav>
+</header>
+<form action="/join_world" method="post">
+	<span>{{ world_name }}</span><br>
+	<input type="hidden" name="world_key" id="world_key" value="{{ world_key }}">
+	<label for="nation_name">国名：</label>
+	<input name="nation_name" type="text"  required>
+	<input type="submit" value="送信">
+</form>
+{{ Common_Footer }}
+</body>
+</html>
