@@ -1,0 +1,24 @@
+@CHARSET "UTF-8";
+@import url(http://fonts.googleapis.com/css?family=Andika);
+
+header{
+	background-color: orange;
+	border-bottom: solid 1px white;
+}
+header img{
+	float: left;
+}
+.header-nav ul{
+	padding-left: 30px;
+}
+.header-nav li{
+  float: left;
+  width: 100px;
+  margin-right: 1px;
+  display: block;
+}
+.header-nav ul:after{
+	content: '';
+	display: block;
+	clear: both;
+}

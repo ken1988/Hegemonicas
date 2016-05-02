@@ -16,27 +16,13 @@ ul{
 body{
 	line-height: 1.6;
 }
-header{
-	border-style: solid;
-	border-color: gray;
-	border-width: 1px;
-}
-header h1{
-	background-color:orange;
-	font-family: 'Andika', sans-serif;
-	font-size: 18px;
-	color: white;
-}
+
 footer{
 	background-color:orange;
 	font-family: 'Andika', sans-serif;
 	color: white;
 	clear: both;
 }
-nav{
-	background-color:#8c2418;
-}
-
 div{
 	border-style: solid;
 	border-color: gray;
@@ -44,13 +30,6 @@ div{
 }
 #action_panel{
 	float: right;
-}
-
-
-.header-nav{
-	background-color: #F2C45A;
-	height: 50px;
-	padding-top: 0px;
 }
 .ui-menu {
 	width: 150px;
@@ -70,23 +49,9 @@ div{
 
 }
 
-.header-nav li{
-  float: left;
-  width: 200px;
-  margin-right: 1px;
-  display: block;}
-
-.header-nav ul:after{
-	content: '';
-	display: block;
-	clear: both;
-}
-#header-menu{
-	background-color: #8c2418;
-}
-#login-box {
+#login-box{
 	background-color: #F2C45A;
-	padding-left: 10px;
+	margin-top: 5px;
 	margin-bottom: 5px;
 }
 #login-box form{

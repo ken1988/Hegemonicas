@@ -8,7 +8,6 @@ import gamescreen
 import datetime
 from models import internal_models
 from models import common_models
-
 import Cookie
 import hashlib
 from google.appengine.ext import db
@@ -22,15 +21,9 @@ class Common_Handler(webapp2.RequestHandler):
     #templates: コンテンツ内Item
 
         template_values = {"Ptitle": tTitle}
-        path = os.path.join(os.path.dirname(__file__), './templates/common_header.html')
-        header_html = template.render(path,template_values)
-        path = os.path.join(os.path.dirname(__file__), './templates/common_footer.html')
-        footer_html = template.render(path,template_values)
-
-        templates['Common_Header'] = header_html
-        templates['Common_Footer'] = footer_html
+        template_values.update(templates)
         path = os.path.join(os.path.dirname(__file__), './templates/'+tURL)
-        self.response.out.write(template.render(path, templates))
+        self.response.out.write(template.render(path, template_values))
 
     def makeHash(self,source):
         h = hashlib.md5()

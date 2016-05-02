@@ -23,5 +23,19 @@
 <![endif]-->
 
 <link href="./stylesheets/genstyle.css" rel="stylesheet">
-
+<link href="./stylesheets/header.css" rel="stylesheet">
 <title>Hegemonicas {{ Ptitle }}</title>
+<body>
+<header>
+<nav class="header-nav">
+<img src="/img/logo.png" alt="Hegemonicas">
+<ul><li>メニュー1</li><li>メニュー2</li></ul>
+</nav>
+</header>
+{% block body %}
+{% endblock %}
+<footer>
+copyrights 2016
+</footer>
+</body>
+</html>
