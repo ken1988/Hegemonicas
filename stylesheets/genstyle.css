@@ -23,11 +23,6 @@ footer{
 	color: white;
 	clear: both;
 }
-div{
-	border-style: solid;
-	border-color: gray;
-	border-width: 1px;
-}
 #action_panel{
 	float: right;
 }

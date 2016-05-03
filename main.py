@@ -4,7 +4,7 @@ import webapp2
 import os
 import csv
 import uuid
-import gamescreen
+from gamescreen import gamescreen
 import datetime
 from models import internal_models
 from models import common_models
@@ -30,6 +30,14 @@ class Common_Handler(webapp2.RequestHandler):
         h.update(source)
         return_key = h.hexdigest()
         return return_key
+
+    def get_user(self,uid):
+        #ログイン確認＆ユーザデータ取得
+        if uid is not None:
+            user = common_models.user().get_by_id(uid)
+            return user
+        else:
+            return
 
 class Signin(Common_Handler):
 #ログアウト時はsign-inへgetモードでアクセスする
@@ -81,10 +89,19 @@ class Signin(Common_Handler):
 class GameScreen(Common_Handler):
 #ゲームメイン画面
     def get(self):
-        gamescreen.OverviewResp
+        user = self.get_user(self.request.cookies.get('hash', ''))
+        if user is None:
+            self.redirect("./")
 
-        templates = {}
-        self.display('ゲーム画面','game_screen.html',templates)
+        tnationID = self.request.get("nationID")
+        tworldID = self.request.get("worldID")
+        if tnationID in user.nationID:
+            params = {"nationID":tnationID,
+                      "worldID":tworldID}
+            gamescreen.Internal_GameScreen.validation_initial(params)
+
+            templates = {}
+            self.display('ゲーム画面','game_screen.html',templates)
 
 class UserScreen(Common_Handler):
 #ユーザメイン画面

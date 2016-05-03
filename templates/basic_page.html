@@ -26,12 +26,53 @@
 <link href="./stylesheets/header.css" rel="stylesheet">
 <title>Hegemonicas {{ Ptitle }}</title>
 <body>
-<header>
-<nav class="header-nav">
-<img src="/img/logo.png" alt="Hegemonicas">
-<ul><li>メニュー1</li><li>メニュー2</li></ul>
-</nav>
-</header>
+	<header>
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed"
+						data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+						aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="./">
+						<img src="/img/logo.png" alt="Hegemonicas">
+					</a>
+				</div>
+				<div id="navbar" class="collapse navbar-collapse row" >
+					{% if login == 1 %}
+					<ul class="nav navbar-nav col-lg-7 col-md-8">
+						<li><a href="/Airport?mode=c"></a></li>
+						<li><a href="/Airport?mode=u"></a></li>
+						<li><a href="/Airline?mode=c"></a></li>
+						<li><a href="/Route"></a></li>
+						<li><a href="/Signin"></a></li>
+					</ul>
+				<div id="login_name" class="alert alert-warning col-lg-2 col-md-3" align="left">
+					<p>ログイン中</p>
+				</div>
+					{% else %}
+					<ul class="nav navbar-nav col-lg-1 col-md-2">
+						<li><a href="/new_user">ユーザ登録</a></li>
+					</ul>
+					<form class="navbar-form" action="/sign-in" method="post">
+						<div class="form-group">
+							<input type="text" name="userID" placeholder="メールアドレス">
+							<input type="password" name="password" placeholder="パスワード">
+							<input type="hidden" name="mode" value="login">
+						</div>
+						<input type="submit" class="btn btn-info  btn-sm" value="ログイン">
+					</form>
+				</div>
+				{% endif %}
+			</div>
+				<!--/.nav-collapse -->
+			</div>
+		</nav>
+	</header>
 {% block body %}
 {% endblock %}
 <footer>

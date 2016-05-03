@@ -5,9 +5,6 @@ header{
 	background-color: orange;
 	border-bottom: solid 1px white;
 }
-header img{
-	float: left;
-}
 .header-nav ul{
 	padding-left: 30px;
 }
