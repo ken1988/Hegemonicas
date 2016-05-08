@@ -41,7 +41,6 @@ footer{
 }
 .left-head h2{
 	vertical-align: middle;
-
 }
 
 #login-box{
@@ -52,8 +51,6 @@ footer{
 #login-box form{
 	display:inline;
 }
-#main{
-	width: 1100px;
 }
 #worldmap{
 	position:relative;

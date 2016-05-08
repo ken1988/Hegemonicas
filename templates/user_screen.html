@@ -1,17 +1,21 @@
 {% extends "basic_page.html" %}
 {% block body %}
-<div>
-<div>
+<div class="main">
+<div id="user_info">
 <h1>ユーザ情報</h1>
-{{ user.name }}
+<table>
+<tr><td>メールアドレス</td><td>{{ user.mail }}</td></tr>
+<tr><td>ユーザ名</td><td>{{ user.name }}</td></tr>
+<tr><td>獲得済みの功績</td><td>}</td></tr>
+</table>
 </div>
-<div>
+<div class="world_select">
 <h1>ワールド選択</h1>
 <h2>参加済みのワールド</h2>
 {% for world,nation in joined_list %}
 <div id="{{ world.key.id }}" class="world_icon">
 <img src="/img/Planet.jpg" alt="world_image">
-<a href="/game_screen?world={{ world.key.id }}">{{ world.world_name }}</a>
+<a href="/game_screen?world={{ world.key.id }}&nation={{ nation.key.id }}">{{ world.world_name }}</a>
 <ul>
 <li>{{ nation.Nation_Name }}</li>
 <li>{{ world.turn }}ターン/{{ world.Max_turn }}ターン</li>

@@ -6,34 +6,50 @@ Created on 2013/01/22
 ------------------------------------------------------
 @author: ken
 '''
+import datetime
+import time
 import random
 import webapp2
 import os
-from google.appengine.ext import db
 from google.appengine.ext import ndb
 
-class BBSmessages(db.Model):
-    orgID = db.StringProperty()
-    frmID = db.StringProperty()
-    parentsID = db.StringProperty()
-    title = db.StringProperty()
-    contents = db.TextProperty()
-    SecClear = db.RatingProperty()
-    postDate = db.TimeProperty()
-    tags = db.StringListProperty()
+class Base_message(ndb.Model):
+    fromID = ndb.KeyProperty() #発信者のID。
+    toID  = ndb.KeyProperty(repeated = True) #相手のID。複数指定可。
+    title = ndb.StringProperty()
+    contents = ndb.TextProperty()
+    postDate = ndb.DateTimeProperty(auto_now_add = True)
+    tags = ndb.StringProperty(repeated = True)
+    broadcast = ndb.BooleanProperty()
 
-class Messages(db.Model):
-    frmID = db.StringProperty()
-    toID  = db.StringProperty()
-    title = db.StringProperty()
-    contents = db.TextProperty()
-    SecClear = db.RatingProperty()
-    postDate = db.TimeProperty()
-    tags = db.StringListProperty()
+    def Send_message(self,msg_pack):
+        self.Valid_message(msg_pack)
+        self.fromID = msg_pack['userID']
+        self.toID   = msg_pack['tuserID']
+        self.title  = msg_pack['title']
+        self.contents = msg_pack['contents']
+        self.tags = msg_pack['tags']
+        self.put()
+        return
 
-class news(db.Model):
-    nationID = db.StringProperty()
-    contents = db.TextProperty()
-    postDate = db.DateTimeProperty()
-    location = db.StringListProperty()
-    tags = db.StringListProperty()
+    def Receive_message(self):
+        return
+
+    def Trash_message(self):
+        return
+
+    def Valid_message(self,data_pack):
+        return
+
+class Sect_message(Base_message):
+    SecClear = ndb.IntegerProperty()
+
+class world_news(Base_message):
+    author = ndb.StringProperty()
+    location = ndb.IntegerProperty(repeated = True)
+
+    def Send_message(self, msg_pack):
+        self.broadcast = True
+        self.location = msg_pack['location']
+        Base_message.Send_message(self,msg_pack)
+        return

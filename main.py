@@ -4,10 +4,11 @@ import webapp2
 import os
 import csv
 import uuid
-from gamescreen import gamescreen
+from middle_process import gamescreen
 import datetime
 from models import internal_models
 from models import common_models
+from models import external_models
 import Cookie
 import hashlib
 from google.appengine.ext import db
@@ -15,14 +16,16 @@ from google.appengine.ext.webapp import template
 from __builtin__ import True
 
 class Common_Handler(webapp2.RequestHandler):
-    def display(self,tTitle,tURL,templates):
+    def display(self,tTitle,tURL,templates,flogin):
     #tTitle: ページタイトル
     #tURL: 使用するテンプレートURL
     #templates: コンテンツ内Item
+    #flogin: ログインフォーム表示フラグ
 
-        template_values = {"Ptitle": tTitle}
+        template_values = {"Ptitle": tTitle,
+                           "flogin": flogin}
         template_values.update(templates)
-        path = os.path.join(os.path.dirname(__file__), './templates/'+tURL)
+        path = os.path.join(os.path.dirname(__file__), './templates/', tURL)
         self.response.out.write(template.render(path, template_values))
 
     def makeHash(self,source):
@@ -33,29 +36,30 @@ class Common_Handler(webapp2.RequestHandler):
 
     def get_user(self,uid):
         #ログイン確認＆ユーザデータ取得
-        if uid is not None:
+        if uid == "":
+            return False
+        else:
             user = common_models.user().get_by_id(uid)
             return user
-        else:
-            return
 
 class Signin(Common_Handler):
-#ログアウト時はsign-inへgetモードでアクセスする
     def get(self):
-        if self.request.get("mode") == 'logout':
-            #cookieを破棄する
-            self.response.delete_cookie('clid')
-            self.response.delete_cookie('hash')
-            self.redirect('/')
+        self.signin_out()
         return
 
     def post(self):
-#ログイン時はsign-inへpostモードでアクセスする
+        self.signin_out()
+        return
 
-        if self.request.get("mode") == 'login':
+    def signin_out(self):
 
-            #Postがあった場合の処理
-            #ユーザーキー、パスワードハッシュ生成
+        if self.request.get("mode") == 'logout':
+            #logoutモードの場合cookieを破棄する
+            self.response.delete_cookie('clid')
+            self.response.delete_cookie('hash')
+
+        elif self.request.get("mode") == 'login':
+            #loginモードの場合cookieを生成する
             user_key = self.makeHash(self.request.get("userID"))
             passwd = self.makeHash(self.request.get('password'))
 
@@ -67,10 +71,10 @@ class Signin(Common_Handler):
                     max_age = 60*120
                     pr_list = {'clid':client_id,'hash':user_key}
                     self.put_cookie(pr_list,max_age)
-                self.redirect('/user_screen')
-            else:
-                self.redirect('/')
+                    self.redirect('/user_screen')
+                    return
 
+        self.redirect('/')
         return
 
     def put_cookie(self,param_list,max_age):
@@ -89,29 +93,40 @@ class Signin(Common_Handler):
 class GameScreen(Common_Handler):
 #ゲームメイン画面
     def get(self):
-        user = self.get_user(self.request.cookies.get('hash', ''))
-        if user is None:
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
             self.redirect("./")
+        else:
+            user = res
 
-        tnationID = self.request.get("nationID")
-        tworldID = self.request.get("worldID")
-        if tnationID in user.nationID:
-            params = {"nationID":tnationID,
-                      "worldID":tworldID}
-            gamescreen.Internal_GameScreen.validation_initial(params)
+        params = {"nationID":int(self.request.get("nation")),
+                  "worldID":int(self.request.get("world")),
+                  "user":user
+                  }
 
+        newScreen = gamescreen.Internal_GameScreen()
+        res_param = newScreen.display_initial(params)
+
+        if res_param["erparam"] == True:
             templates = {}
-            self.display('ゲーム画面','game_screen.html',templates)
+            self.display('ゲーム画面','game_screen.html',templates,0)
+        else:
+            self.redirect('/user_screen?msg=XXXXX')
 
 class UserScreen(Common_Handler):
 #ユーザメイン画面
 #ログイン後、いったんユーザメイン画面に入り各ワールドへ遷移する
 
     def get(self):
-        uid = self.request.cookies.get('hash', '')
-        user_data = common_models.user.get_by_id(uid)
-        Joined_world = user_data.worldID
-        Joined_nation = user_data.nationID
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
+            self.redirect("./")
+            return
+        else:
+            user = res
+
+        Joined_world = user.worldID
+        Joined_nation = user.nationID
         Available_world = common_models.World().query(common_models.World.available == True).fetch(keys_only=True)
 
         worlds_a = []
@@ -129,12 +144,13 @@ class UserScreen(Common_Handler):
 
         joined_list = zip(worlds_b,nations_data)
         templates = {
-                     "user": user_data,
+                     "user": user,
                      "worlds_a":worlds_a,
                      "joined_list":joined_list
                      }
 
-        self.display('ユーザ画面','user_screen.html',templates)
+        self.display('ユーザ画面','user_screen.html',templates,0)
+        return
 
     def post(self):
         return
@@ -144,7 +160,7 @@ class User_Regi(Common_Handler):
     def get(self):
         #get => 登録画面への初回アクセス。特に何も処理しない。
         template_values = {}
-        self.display('ユーザ登録画面','user_registration.html',template_values)
+        self.display('ユーザ登録画面','user_registration.html',template_values,0)
 
     def post(self):
         #post => 登録画面へのデータ送信。入力チェックと確認画面の表示、DBへの登録。
@@ -168,22 +184,36 @@ class User_Regi(Common_Handler):
 class JoinWorld(Common_Handler):
 
     def get(self):
+        user = self.get_user(self.request.cookies.get('hash', ''))
+        if user is None:
+            self.redirect("./")
+
         #get => 登録画面への初回アクセス。
         tWorld = common_models.World().get_by_id(int(self.request.get("world_key")))
         template_values = {"world_name": tWorld.world_name,
                            "world_key": self.request.get("world_key")}
-        self.display('ワールド作成画面','nation_registration.html',template_values)
+        self.display('ワールド参加画面','nation_registration.html',template_values,0)
         return
 
     def post(self):
+        capital_location = []
+
         uid = self.request.cookies.get('hash', '')
         nation_name = self.request.get("nation_name")
+        capital_name = self.request.get("capital_name")
+        capital_location.append(int(self.request.get("locationX")))
+        capital_location.append(int(self.request.get("locationY")))
+
         owner = common_models.user().get_by_id(uid)
         tworld = common_models.World().get_by_id(int(self.request.get("world_key")))
 
         new_nation = internal_models.Nation()
         new_key = new_nation.creation(owner.key, tworld.key, nation_name)
 
+        first_region = internal_models.Region()
+        reg_key = first_region.creation(new_key, capital_name, capital_location)
+
+        new_nation.initialization(reg_key,capital_name)
         owner.join_to_world(tworld.key,new_key)
         tworld.join(new_key)
         self.redirect('/user_screen')
@@ -192,9 +222,13 @@ class JoinWorld(Common_Handler):
 class NewWorld(Common_Handler):
 
     def get(self):
+        user = self.get_user(self.request.cookies.get('hash', ''))
+        if user is None:
+            self.redirect("./")
+
         #get => 登録画面への初回アクセス。
         template_values = {"creator": self.request.get("creator")}
-        self.display('ワールド作成画面','world_creation.html',template_values)
+        self.display('ワールド作成画面','world_creation.html',template_values,0)
         return
 
     def post(self):
@@ -212,7 +246,7 @@ class MainPage(Common_Handler):
 
     def get(self):
         templates = {}
-        self.display('メインページ','index.html',templates)
+        self.display('メインページ','index.html',templates,1)
 
 app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/sign-in', Signin),

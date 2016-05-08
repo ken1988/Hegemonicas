@@ -43,17 +43,13 @@
 					</a>
 				</div>
 				<div id="navbar" class="collapse navbar-collapse row" >
-					{% if login == 1 %}
+					{% if flogin == 0 %}
 					<ul class="nav navbar-nav col-lg-7 col-md-8">
-						<li><a href="/Airport?mode=c"></a></li>
-						<li><a href="/Airport?mode=u"></a></li>
-						<li><a href="/Airline?mode=c"></a></li>
-						<li><a href="/Route"></a></li>
-						<li><a href="/Signin"></a></li>
+						<li><a href="/Route">AAA</a></li>
+						<li><a href="/Route">VVV</a></li>
+						<li><a href="/Route">CCC</a></li>
+						<li><a href="/sign-in?mode=logout">ログアウト</a></li>
 					</ul>
-				<div id="login_name" class="alert alert-warning col-lg-2 col-md-3" align="left">
-					<p>ログイン中</p>
-				</div>
 					{% else %}
 					<ul class="nav navbar-nav col-lg-1 col-md-2">
 						<li><a href="/new_user">ユーザ登録</a></li>
@@ -66,13 +62,14 @@
 						</div>
 						<input type="submit" class="btn btn-info  btn-sm" value="ログイン">
 					</form>
+
 				</div>
 				{% endif %}
 			</div>
-				<!--/.nav-collapse -->
-			</div>
+		<!--/.nav-collapse -->
 		</nav>
 	</header>
+{ sys_message }
 {% block body %}
 {% endblock %}
 <footer>

@@ -1,35 +1,9 @@
 {% extends "basic_page.html" %}
 {% block body %}
-
-<script type="text/javascript">
-$(function() {
-    var icons = {
-            header: "ui-icon-circle-arrow-e",
-            activeHeader: "ui-icon-circle-arrow-s"
-        };
-
-	$("#header-menu li").hover(function() {
-		$(this).children('ul').show();
-	}, function() {
-		$(this).children('ul').hide();
-	});
-
-	$("#menu").hide();
-	$("#action_panel").menu();
-
-	$("#worldmap").click(function(e) {
-	var dx=e.clientX;
-	var dy=e.clientY;
-	$("#menu").menu().show();
-	$("#menu").css({top:dy,left:dx});
-	});
-});
-</script>
-
-	<div id="main">
+<div id="main">
 		<div id="worldmap">
-			<img src="/img/mapx1y1.png" alt="" /><img src="/img/mapx2y1.png" alt="" /><img src="/img/mapx3y1.png" alt="" />
-			<img src="/img/mapx1y2.png" alt="" /><img src="/img/mapx2y2.png" alt="" /><img src="/img/mapx3y2.png" alt="" />
+		<img src="/img/mapx1y1.png" alt="" /><img src="/img/mapx2y1.png" alt="" /><img src="/img/mapx3y1.png" alt="" />
+		<img src="/img/mapx1y2.png" alt="" /><img src="/img/mapx2y2.png" alt="" /><img src="/img/mapx3y2.png" alt="" />
 		</div>
 	<div id="rightpanel">
 	<div id="maptool">

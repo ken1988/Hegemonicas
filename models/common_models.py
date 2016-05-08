@@ -29,6 +29,8 @@ class World(ndb.Model):
     turn = ndb.IntegerProperty()
     Max_nation = ndb.IntegerProperty()
     Max_turn = ndb.IntegerProperty()
+    Max_height = ndb.IntegerProperty()
+    Max_width  = ndb.IntegerProperty()
     available = ndb.BooleanProperty()
     Numnations = ndb.IntegerProperty()
     nations = ndb.KeyProperty(repeated = True)
@@ -62,3 +64,7 @@ class World(ndb.Model):
     def update_avst(self):
         self.available = False
         return
+
+class err_code(ndb.Model):
+    category = ndb.StringProperty()
+    disp_text = ndb.TextProperty()
