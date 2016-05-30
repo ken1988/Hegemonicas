@@ -109,7 +109,8 @@ class GameScreen(Common_Handler):
             user = res
 
         if self.request.get("mode") == "valid":
-            self.validate(user)
+            ercd = self.validate(user)
+            return ercd
 
         sys_message = ""
         if self.request.get("msg"):
