@@ -14,6 +14,10 @@ class user(ndb.Model):
     mail = ndb.StringProperty()
     worldID = ndb.KeyProperty(repeated = True)
     nationID = ndb.KeyProperty(repeated = True)
+    category = ndb.StringProperty()
+    rank = ndb.IntegerProperty()
+    rank_point = ndb.IntegerProperty()
+    achivement = ndb.KeyProperty(repeated = True)
 
     def join_to_world(self, world_id,nation_id):
         self.worldID.append(world_id)

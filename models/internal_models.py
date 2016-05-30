@@ -111,3 +111,8 @@ class WorldMap(ndb.Model):
     resistPoint = ndb.IntegerProperty() #攻撃に対する抵抗値
     national = ndb.JsonProperty(repeated = True)#住民の国籍（国Key+比率のデータをJSONでシリアライズ）
 
+    def disp_map(self,pos):
+        
+
+        return
+

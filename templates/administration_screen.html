@@ -1,0 +1,21 @@
+{% extends "basic_page.html" %}
+{% block body %}
+<div id="main">
+<h2>エラーコード管理</h2>
+{% if new_code %}
+{{ new_code.id }}が登録されました。
+{% endif %}
+<ul>
+{% for ercd in all_ercd %}
+<li>{{ ercd.key }}:{{ ercd.disp_text }}</li>
+{% endfor %}
+</ul>
+<div id="maint_err" class="form-group">
+<form action="/maintenance" method="post">
+<input type="text" name="err_cat" placeholder="カテゴリー">
+<input type="text" name="err_txt" placeholder="テキスト">
+<input type="submit" class="btn btn-info  btn-sm" value="送信">
+</form>
+</div>
+</div>
+{% endblock %}

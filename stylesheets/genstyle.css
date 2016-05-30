@@ -65,21 +65,6 @@ footer{
 #menu{
 	position: absolute;
 }
-#news-side
-{
-	float:left;
-	width: 280px;
-}
-#news-side h2{
-	margin-left:25px;
-}
-#worldnews-contents {
-	height:600px;
-	padding-left:0px;
-}
-#rightside
-{
-	float: right;
-	width: 810px;
-	height: 600px;
+.world_icon {
+	border-bottom: solid 1px black;
 }

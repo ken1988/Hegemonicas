@@ -17,39 +17,43 @@ class Internal_GameScreen():
         初期画面を表示する
         '''
         return_param = {}
-        erparam = self.validation_initial(params)
+        ercd = self.validation_initial(params)
 
-        if erparam == True:
+        if ercd == True:
+            worldmap = internal_models.WorldMap.get_by_id(params['worldID'])
+            nation = internal_models.Nation.get_by_id(params['nationID'])
+            projects=[]
+
+            for prjID in nation.Projectque:
+                projects.append(internal_models.Project.get_by_id(prjID.id()))
+
             nation_stat = 0
-            return_param ={"view_point":00,
+            return_param ={"view_point":10,
                            "nation_stat":nation_stat,
-                           "erparam":erparam}
+                           "erparam":ercd}
         else:
-            return_param = {"erparam":erparam}
+            return_param = {"erparam":ercd}
 
         return return_param
+
 
     def validation_initial(self,params):
         try:
             world = common_models.World.get_by_id(params['worldID'])
             nation = internal_models.Nation.get_by_id(params['nationID'])
             user = params['user']
-            ermsg = []
+            ercd = ""
 
             if not nation.key in user.nationID:
-                ermsg.append("所有していない国のIDが指定されました。")
+                ercd ="5772779643207680"
+            elif not nation.key in world.nations:
+                ercd ="5875668269137920"
 
-            if not nation.key in world.nations:
-                ermsg.append("ワールドに存在しない国のIDが指定されました")
-
-            if len(ermsg) == 0:
-                return True
-            else:
-                return ermsg
+            return ercd
 
         except Exception:
-            ermsg.append("例外エラーが発生しました")
-            return ermsg
+            ercd ="5777752678465536"
+            return ercd
 
 class Internal_GameProcess():
     '''

@@ -4,11 +4,11 @@ import webapp2
 import os
 import csv
 import uuid
-from middle_process import gamescreen
 import datetime
 from models import internal_models
 from models import common_models
 from models import external_models
+from middle_process import gamescreen
 import Cookie
 import hashlib
 from google.appengine.ext import db
@@ -41,6 +41,15 @@ class Common_Handler(webapp2.RequestHandler):
         else:
             user = common_models.user().get_by_id(uid)
             return user
+
+    def validate(self):
+
+        return
+
+    def disp_err(self,errcd):
+        #エラーメッセージ出力
+        err = common_models.err_code.get_by_id(errcd)
+        return err.disp_text
 
 class Signin(Common_Handler):
     def get(self):
@@ -92,26 +101,50 @@ class Signin(Common_Handler):
 
 class GameScreen(Common_Handler):
 #ゲームメイン画面
-    def get(self):
+    def post(self):
         res = self.get_user(self.request.cookies.get('hash', ''))
         if res == False:
             self.redirect("./")
         else:
             user = res
 
-        params = {"nationID":int(self.request.get("nation")),
-                  "worldID":int(self.request.get("world")),
-                  "user":user
-                  }
+        if self.request.get("mode") == "valid":
+            self.validate(user)
 
-        newScreen = gamescreen.Internal_GameScreen()
-        res_param = newScreen.display_initial(params)
+        sys_message = ""
+        if self.request.get("msg"):
+            sys_message = self.disp_err(self.request.get("msg"))
 
-        if res_param["erparam"] == True:
-            templates = {}
-            self.display('ゲーム画面','game_screen.html',templates,0)
+
+            if self.request.get("nation").isdigit() and self.request.get("world").isdigit():
+                params = {"nationID":int(self.request.get("nation")),
+                          "worldID":int(self.request.get("world")),
+                          "sys_message":sys_message,
+                          "user":user,
+                          }
+                newScreen = gamescreen.Internal_GameScreen()
+                res_param = newScreen.display_initial(params)
+            else:
+                res_param["erparam"] = "5825485334380544"
+
+            if res_param["erparam"] == True:
+                templates = {}
+                self.display('ゲーム画面','game_screen.html',templates,0)
+        return
+
+    def validate(self,user):
+
+        if self.request.get("nation").isdigit() and self.request.get("world").isdigit():
+            params = {"nationID":int(self.request.get("nation")),
+                      "worldID":int(self.request.get("world")),
+                      "user":user,
+                      }
+            newScreen = gamescreen.Internal_GameScreen()
+            ercd = newScreen.validation_initial(params)
         else:
-            self.redirect('/user_screen?msg=XXXXX')
+            ercd = "5825485334380544"
+
+        return ercd
 
 class UserScreen(Common_Handler):
 #ユーザメイン画面
@@ -124,6 +157,10 @@ class UserScreen(Common_Handler):
             return
         else:
             user = res
+
+        sys_message = ""
+        if self.request.get("msg"):
+            sys_message = self.disp_err(int(self.request.get("msg")))
 
         Joined_world = user.worldID
         Joined_nation = user.nationID
@@ -146,7 +183,8 @@ class UserScreen(Common_Handler):
         templates = {
                      "user": user,
                      "worlds_a":worlds_a,
-                     "joined_list":joined_list
+                     "joined_list":joined_list,
+                     "sys_message":sys_message
                      }
 
         self.display('ユーザ画面','user_screen.html',templates,0)
@@ -184,9 +222,10 @@ class User_Regi(Common_Handler):
 class JoinWorld(Common_Handler):
 
     def get(self):
-        user = self.get_user(self.request.cookies.get('hash', ''))
-        if user is None:
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
             self.redirect("./")
+            return
 
         #get => 登録画面への初回アクセス。
         tWorld = common_models.World().get_by_id(int(self.request.get("world_key")))
@@ -222,9 +261,10 @@ class JoinWorld(Common_Handler):
 class NewWorld(Common_Handler):
 
     def get(self):
-        user = self.get_user(self.request.cookies.get('hash', ''))
-        if user is None:
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
             self.redirect("./")
+            return
 
         #get => 登録画面への初回アクセス。
         template_values = {"creator": self.request.get("creator")}
@@ -242,10 +282,46 @@ class NewWorld(Common_Handler):
         self.redirect('/user_screen')
         return
 
+class SystemConsol(Common_Handler):
+
+    def get(self):
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
+            self.redirect("./")
+            return
+        else:
+            user = res
+
+        all_errcd = common_models.err_code.query()
+        templates = {"all_ercd":all_errcd}
+        self.display('システム管理画面','administration_screen.html',templates,0)
+        return
+
+    def post(self):
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
+            self.redirect("./")
+        else:
+            user = res
+
+        new_cd = common_models.err_code()
+        new_cd.category = self.request.get("err_cat")
+        new_cd.disp_text = self.request.get("err_txt")
+        ercd = new_cd.put()
+
+        templates = {"new_code":ercd}
+        self.display('システム管理画面','administration_screen.html',templates,0)
+        return
+
 class MainPage(Common_Handler):
 
     def get(self):
-        templates = {}
+
+        sys_message = ""
+        if self.request.get("msg"):
+            sys_message = self.disp_err(self.request.get("msg"))
+
+        templates = {"sys_message":sys_message}
         self.display('メインページ','index.html',templates,1)
 
 app = webapp2.WSGIApplication([('/',MainPage),
@@ -255,4 +331,5 @@ app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/join_world', JoinWorld),
                                 ('/user_screen', UserScreen),
                                 ('/new_world', NewWorld),
+                                ('/maintenance', SystemConsol),
                                 ],debug=True)

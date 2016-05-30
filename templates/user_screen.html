@@ -2,20 +2,30 @@
 {% block body %}
 <div class="main">
 <div id="user_info">
-<h1>ユーザ情報</h1>
+<h2>ユーザ情報</h2>
 <table>
 <tr><td>メールアドレス</td><td>{{ user.mail }}</td></tr>
 <tr><td>ユーザ名</td><td>{{ user.name }}</td></tr>
-<tr><td>獲得済みの功績</td><td>}</td></tr>
+<tr><td>獲得済みの功績</td><td>{{ user.achivement }}</td></tr>
 </table>
+{{ user.category }}
+{% if user.category == "Admin" %}
+<a href="/maintenance">メンテナンス画面へ</a>
+{% endif %}
 </div>
-<div class="world_select">
-<h1>ワールド選択</h1>
-<h2>参加済みのワールド</h2>
+<div id="world_select" class="bs-callout bs-callout-danger">
+<h2>ワールド選択</h2>
+<div class="row">
+<h3>参加済みのワールド</h3>
 {% for world,nation in joined_list %}
-<div id="{{ world.key.id }}" class="world_icon">
+<div id="{{ world.key.id }}" class="panel panel-primary">
 <img src="/img/Planet.jpg" alt="world_image">
-<a href="/game_screen?world={{ world.key.id }}&nation={{ nation.key.id }}">{{ world.world_name }}</a>
+<form id="open_world_form"  action="/game_screen" method="post">
+<input type="submit" id="open_world" name="open_world" value="{{ world.world_name }}">
+<input type="hidden" id="world" name="world" value="{{ world.key.id }}">
+<input type="hidden" id="nation" name="nation" value="{{ nation.key.id }}">
+<input type="hidden" id="mode" name="mode" value="valid">
+</form>
 <ul>
 <li>{{ nation.Nation_Name }}</li>
 <li>{{ world.turn }}ターン/{{ world.Max_turn }}ターン</li>
@@ -23,9 +33,11 @@
 </ul>
 </div>
 {% endfor %}
-<h2>参加可能なワールド</h2>
+</div>
+<div class="row">
+<h3>参加可能なワールド</h3>
 {% for world in worlds_a %}
-<div id="{{ world.key.id }}" class="world_icon">
+<div id="{{ world.key.id }}" class="panel panel-primary">
 <h3>{{ world.world_name }}</h3>
 <img src="/img/Planet.jpg" alt="world_image">
 <form action="/join_world" method="get">
@@ -38,6 +50,7 @@
 </ul>
 </div>
 {% endfor %}
+</div>
 <form action="/new_world" method="get">
 <input type="hidden" name="creator" id="creator" value={{ user.name }}>
 <input type="submit" name="new_world" id="new_world" value="ワールドを創る">
