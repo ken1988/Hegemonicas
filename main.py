@@ -14,6 +14,7 @@ import hashlib
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from __builtin__ import True
+import json
 
 class Common_Handler(webapp2.RequestHandler):
     def display(self,tTitle,tURL,templates,flogin):
@@ -41,10 +42,6 @@ class Common_Handler(webapp2.RequestHandler):
         else:
             user = common_models.user().get_by_id(uid)
             return user
-
-    def validate(self):
-
-        return
 
     def disp_err(self,errcd):
         #エラーメッセージ出力
@@ -102,35 +99,30 @@ class Signin(Common_Handler):
 class GameScreen(Common_Handler):
 #ゲームメイン画面
     def post(self):
-        res = self.get_user(self.request.cookies.get('hash', ''))
-        if res == False:
+        user = self.get_user(self.request.cookies.get('hash', ''))
+        if user == False:
             self.redirect("./")
-        else:
-            user = res
 
-        if self.request.get("mode") == "valid":
-            ercd = self.validate(user)
-            return ercd
+        errcd = self.validate(user)
+        if errcd <> "":
+            #ヘッダー情報
+            self.response.headers['Content-Type'] = 'application/json'
+            self.response.out.write(json.dumps(errcd))
 
         sys_message = ""
         if self.request.get("msg"):
             sys_message = self.disp_err(self.request.get("msg"))
 
+        params = {"nationID":int(self.request.get("nation")),
+                  "worldID":int(self.request.get("world")),
+                  "sys_message":sys_message,
+                  "user":user,
+                  }
+        newScreen = gamescreen.Internal_GameScreen()
+        res_param = newScreen.display_initial(params)
 
-            if self.request.get("nation").isdigit() and self.request.get("world").isdigit():
-                params = {"nationID":int(self.request.get("nation")),
-                          "worldID":int(self.request.get("world")),
-                          "sys_message":sys_message,
-                          "user":user,
-                          }
-                newScreen = gamescreen.Internal_GameScreen()
-                res_param = newScreen.display_initial(params)
-            else:
-                res_param["erparam"] = "5825485334380544"
-
-            if res_param["erparam"] == True:
-                templates = {}
-                self.display('ゲーム画面','game_screen.html',templates,0)
+        templates = {"sys_message":sys_message,}
+        self.display('ゲーム画面','game_screen.html',templates,0)
         return
 
     def validate(self,user):
@@ -141,11 +133,11 @@ class GameScreen(Common_Handler):
                       "user":user,
                       }
             newScreen = gamescreen.Internal_GameScreen()
-            ercd = newScreen.validation_initial(params)
+            errcd = newScreen.validation_initial(params)
         else:
-            ercd = "5825485334380544"
+            errcd ="5825485334380544"
 
-        return ercd
+        return errcd
 
 class UserScreen(Common_Handler):
 #ユーザメイン画面

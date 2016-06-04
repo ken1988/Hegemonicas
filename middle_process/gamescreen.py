@@ -17,23 +17,16 @@ class Internal_GameScreen():
         初期画面を表示する
         '''
         return_param = {}
-        ercd = self.validation_initial(params)
+        worldmap = internal_models.WorldMap.get_by_id(params['worldID'])
+        nation = internal_models.Nation.get_by_id(params['nationID'])
+        projects=[]
 
-        if ercd == True:
-            worldmap = internal_models.WorldMap.get_by_id(params['worldID'])
-            nation = internal_models.Nation.get_by_id(params['nationID'])
-            projects=[]
+        for prjID in nation.Projectque:
+            projects.append(internal_models.Project.get_by_id(prjID.id()))
 
-            for prjID in nation.Projectque:
-                projects.append(internal_models.Project.get_by_id(prjID.id()))
-
-            nation_stat = 0
-            return_param ={"view_point":10,
-                           "nation_stat":nation_stat,
-                           "erparam":ercd}
-        else:
-            return_param = {"erparam":ercd}
-
+        nation_stat = 0
+        return_param ={"view_point":10,
+                       "nation_stat":nation_stat}
         return return_param
 
 

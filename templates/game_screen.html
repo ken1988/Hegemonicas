@@ -1,40 +1,20 @@
 {% extends "basic_page.html" %}
 {% block body %}
 <div id="main">
-		<div id="worldmap">
-		<img src="/img/mapx1y1.png" alt="" /><img src="/img/mapx2y1.png" alt="" /><img src="/img/mapx3y1.png" alt="" />
-		<img src="/img/mapx1y2.png" alt="" /><img src="/img/mapx2y2.png" alt="" /><img src="/img/mapx3y2.png" alt="" />
-		</div>
-	<div id="rightpanel">
-	<div id="maptool">
-	<h2>マップ情報</h2>
-	<p>
-	ここにマップ情報を表示
-	</p>
+   <ul class="nav nav-pills">
+   <li role="presentation">外交</li>
+   <li role="presentation">計画</li>
+   <li role="presentation">統計</li>
+   </ul>
+	<div id="worldmap">
+		<img src="/img/map/mapx1y1.png" alt="" /><img src="/img/map/mapx2y1.png" alt="" /><img src="/img/map/mapx3y1.png" alt="" />
+		<img src="/img/map/mapx1y2.png" alt="" /><img src="/img/map/mapx2y2.png" alt="" /><img src="/img/map/mapx3y2.png" alt="" />
 	</div>
-	<ul id="action_panel">
-			<li><a href="/game_diplomacy">外交</a></li>
-			<li><a href="/game_screen">内政</a></li>
-			<li><a href="/game_data">データ</a></li>
-			<li><a href="/game_trade">貿易</a></li>
-			<li><a href="/settings">設定</a></li>
-	</ul>
-		<input type="button" value="右へ移動">
+	<div id="datapanel">
+	<table class="table">
+	<tr><td>人口</td><td></td><td></td><td></td></tr>
+	<tr><td>生産</td><td></td><td></td><td></td></tr>
+	</table>
 	</div>
-	<ul id="menu">
-    	<li><a href="#">Item 1</a></li>
-    	<li><a href="#">Item 2</a></li>
-   	 	<li><a href="#">Item 3</a>
-        	<ul>
-            	<li><a href="#">Item 3-1</a></li>
-            	<li><a href="#">Item 3-2</a></li>
-            	<li><a href="#">Item 3-3</a></li>
-            	<li><a href="#">Item 3-4</a></li>
-            	<li><a href="#">Item 3-5</a></li>
-        	</ul>
-    	</li>
-    	<li><a href="#">Item 4</a></li>
-    	<li><a href="#">Item 5</a></li>
-	</ul>
-	</div>
+</div>
 {% endblock %}

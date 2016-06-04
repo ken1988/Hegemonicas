@@ -12,7 +12,6 @@
 			    $form.serialize(),
 			    function(data){
 			 alert("ERROR CODE:" + data);
-		 })
-	 })
-
- }
+		 });
+	 });
+ });
