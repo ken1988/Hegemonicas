@@ -103,32 +103,30 @@ class GameScreen(Common_Handler):
         if user == False:
             self.redirect("./")
 
-        errcd = self.validate(user)
-        if errcd <> 0:
-            #エラーメッセージ返送
-            ermsg = self.disp_err(errcd)
-            rsmsg = ermsg.encode('utf_8')
-            self.response.headers['Content-Type'] = 'application/json'
-            self.response.out.write(json.dumps(rsmsg))
-            return
+        if self.request.get("mode") == "pre_validation":
+            self.validate(user)
 
-        sys_message = ""
-        if self.request.get("msg"):
-            sys_message = self.disp_err(self.request.get("msg"))
+        elif self.request.get("mode") == "validated":
+            sys_message = ""
+            if self.request.get("msg"):
+                sys_message = self.disp_err(self.request.get("msg"))
 
-        params = {"nationID":int(self.request.get("nation")),
-                  "worldID":int(self.request.get("world")),
-                  "sys_message":sys_message,
-                  "user":user,
-                  }
-        newScreen = gamescreen.Internal_GameScreen()
-        res_param = newScreen.display_initial(params)
+            params = {"nationID":int(self.request.get("nation")),
+                      "worldID":int(self.request.get("world")),
+                      "sys_message":sys_message,
+                      "user":user,
+                      }
+            newScreen = gamescreen.Internal_GameScreen()
+            res_param = newScreen.display_initial(params)
 
-        templates = {"sys_message":sys_message,}
-        self.display('ゲーム画面','game_screen.html',templates,0)
+            templates = {"sys_message":sys_message}
+            self.display('ゲーム画面','game_screen.html',templates,0)
+
         return
 
     def validate(self,user):
+        errcd = 0
+        ermsg = ""
 
         if self.request.get("nation").isdigit() and self.request.get("world").isdigit():
             params = {"nationID":int(self.request.get("nation")),
@@ -140,7 +138,16 @@ class GameScreen(Common_Handler):
         else:
             errcd = 5825485334380544
 
-        return errcd
+        if errcd <> 0:
+            ermsg = self.disp_err(errcd)
+
+        #エラーメッセージ返送
+        rsmsg = {"code":errcd,
+                 "msg":ermsg.encode('utf_8')}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(rsmsg))
+
+        return
 
 class UserScreen(Common_Handler):
 #ユーザメイン画面

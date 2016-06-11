@@ -22,9 +22,10 @@
 <div id="{{ world.key.id }}" class="panel panel-primary">
 <img src="/img/Planet.jpg" alt="world_image">
 <form id="open_world_form"  action="/game_screen" method="post">
-<input type="submit" id="open_world" name="open_world" value="{{ world.world_name }}">
+<input type="button" id="open_world" name="open_world" value="{{ world.world_name }}">
 <input type="hidden" id="world" name="world" value="{{ world.key.id }}">
 <input type="hidden" id="nation" name="nation" value="{{ nation.key.id }}">
+<input type="hidden" id="mode" name="mode" value="pre_validation">
 </form>
 <ul>
 <li>{{ nation.Nation_Name }}</li>
