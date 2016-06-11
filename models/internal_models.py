@@ -77,7 +77,7 @@ class Project(ndb.Model):
 class Region(ndb.Model):
     nationID = ndb.KeyProperty()
     region_name = ndb.StringProperty()
-    region_location = ndb.IntegerProperty(repeated = True)
+    region_maps = ndb.KeyProperty(repeated = True) #World Mapを突っ込む
     region_pop = ndb.StructuredProperty(Population, repeated = True) #上流、中流、下流×都市、農村の6分類を作成
     region_product = ndb.IntegerProperty(repeated = True)
     region_consume = ndb.IntegerProperty(repeated = True)
@@ -105,14 +105,17 @@ class Region(ndb.Model):
 class WorldMap(ndb.Model):
     locationX = ndb.IntegerProperty() #X座標
     locationY = ndb.IntegerProperty() #Y座標
+    ruler = ndb.KeyProperty() #現在の支配者
     terra = ndb.StructuredProperty(Terrain)     #基礎地形
     architect = ndb.StructuredProperty(Architect)  #建築物
     localname = ndb.StringProperty() #固有名称
     resistPoint = ndb.IntegerProperty() #攻撃に対する抵抗値
     national = ndb.JsonProperty(repeated = True)#住民の国籍（国Key+比率のデータをJSONでシリアライズ）
 
-    def disp_map(self,pos):
-        
+    def disp_map(self,position,world):
 
         return
 
+    def make_map(self):
+
+        return

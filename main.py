@@ -45,7 +45,7 @@ class Common_Handler(webapp2.RequestHandler):
 
     def disp_err(self,errcd):
         #エラーメッセージ出力
-        err = common_models.err_code.get_by_id(errcd)
+        err = common_models.err_code().get_by_id(errcd)
         return err.disp_text
 
 class Signin(Common_Handler):
@@ -104,10 +104,13 @@ class GameScreen(Common_Handler):
             self.redirect("./")
 
         errcd = self.validate(user)
-        if errcd <> "":
-            #ヘッダー情報
+        if errcd <> 0:
+            #エラーメッセージ返送
+            ermsg = self.disp_err(errcd)
+            rsmsg = ermsg.encode('utf_8')
             self.response.headers['Content-Type'] = 'application/json'
-            self.response.out.write(json.dumps(errcd))
+            self.response.out.write(json.dumps(rsmsg))
+            return
 
         sys_message = ""
         if self.request.get("msg"):
@@ -135,7 +138,7 @@ class GameScreen(Common_Handler):
             newScreen = gamescreen.Internal_GameScreen()
             errcd = newScreen.validation_initial(params)
         else:
-            errcd ="5825485334380544"
+            errcd = 5825485334380544
 
         return errcd
 
@@ -284,9 +287,11 @@ class SystemConsol(Common_Handler):
             return
         else:
             user = res
-
         all_errcd = common_models.err_code.query()
-        templates = {"all_ercd":all_errcd}
+        all_world = common_models.World.query()
+
+        templates = {"all_ercd":all_errcd,
+                     "all_world":all_world}
         self.display('システム管理画面','administration_screen.html',templates,0)
         return
 
@@ -304,6 +309,26 @@ class SystemConsol(Common_Handler):
 
         templates = {"new_code":ercd}
         self.display('システム管理画面','administration_screen.html',templates,0)
+        return
+
+class WorldMap(Common_Handler):
+
+    def get(self):
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
+            self.redirect("./")
+            return
+        else:
+            user = res
+
+        return
+
+    def post(self):
+        res = self.get_user(self.request.cookies.get('hash', ''))
+        if res == False:
+            self.redirect("./")
+            return
+
         return
 
 class MainPage(Common_Handler):
@@ -325,4 +350,5 @@ app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/user_screen', UserScreen),
                                 ('/new_world', NewWorld),
                                 ('/maintenance', SystemConsol),
+                                ('/worldmap', WorldMap),
                                 ],debug=True)

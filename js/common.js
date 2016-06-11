@@ -9,9 +9,9 @@
          // 操作対象のフォーム要素を取得
 		 var $form = $(this);
 		 $.post($form.attr('action'),
-			    $form.serialize(),
-			    function(data){
-			 alert("ERROR CODE:" + data);
+			    $form.serialize())
+			    .done(function(data) {
+			    	alert( data );
 		 });
 	 });
  });

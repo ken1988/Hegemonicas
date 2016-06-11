@@ -1,6 +1,7 @@
 {% extends "basic_page.html" %}
 {% block body %}
 <div id="main">
+<div id="errcd">
 <h2>エラーコード管理</h2>
 {% if new_code %}
 {{ new_code.id }}が登録されました。
@@ -16,6 +17,13 @@
 <input type="text" name="err_txt" placeholder="テキスト">
 <input type="submit" class="btn btn-info  btn-sm" value="送信">
 </form>
+</div>
+</div>
+<div id="world_mainte">
+<h2>ワールドマップ管理</h2>
+{% for world in all_world %}
+{{ world.world_name }}<a href="/worldmap?id={{ world.key.id }}">ワールドマップ管理画面へ移動</a>
+{% endfor %}
 </div>
 </div>
 {% endblock %}

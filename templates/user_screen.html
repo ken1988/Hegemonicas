@@ -1,6 +1,7 @@
 {% extends "basic_page.html" %}
 {% block body %}
 <div class="main">
+<div class=""></div>
 <div id="user_info">
 <h2>ユーザ情報</h2>
 <table>
@@ -15,7 +16,7 @@
 </div>
 <div id="world_select" class="bs-callout bs-callout-danger">
 <h2>ワールド選択</h2>
-<div class="row">
+<div>
 <h3>参加済みのワールド</h3>
 {% for world,nation in joined_list %}
 <div id="{{ world.key.id }}" class="panel panel-primary">
@@ -33,7 +34,7 @@
 </div>
 {% endfor %}
 </div>
-<div class="row">
+<div>
 <h3>参加可能なワールド</h3>
 {% for world in worlds_a %}
 <div id="{{ world.key.id }}" class="panel panel-primary">

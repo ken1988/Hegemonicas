@@ -35,17 +35,17 @@ class Internal_GameScreen():
             world = common_models.World.get_by_id(params['worldID'])
             nation = internal_models.Nation.get_by_id(params['nationID'])
             user = params['user']
-            ercd = ""
+            ercd = 0
 
             if not nation.key in user.nationID:
-                ercd ="5772779643207680"
+                ercd = 5772779643207680
             elif not nation.key in world.nations:
-                ercd ="5875668269137920"
+                ercd = 5875668269137920
 
             return ercd
 
         except Exception:
-            ercd ="5777752678465536"
+            ercd = 5777752678465536
             return ercd
 
 class Internal_GameProcess():
