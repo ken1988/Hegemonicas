@@ -103,6 +103,7 @@ class Region(ndb.Model):
         return
 
 class WorldMap(ndb.Model):
+    world_id = ndb.KeyProperty() #所属するworld
     locationX = ndb.IntegerProperty() #X座標
     locationY = ndb.IntegerProperty() #Y座標
     ruler = ndb.KeyProperty() #現在の支配者

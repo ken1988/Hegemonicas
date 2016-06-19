@@ -38,8 +38,9 @@ class World(ndb.Model):
     available = ndb.BooleanProperty()
     Numnations = ndb.IntegerProperty()
     nations = ndb.KeyProperty(repeated = True)
+    update_hex = ndb.KeyProperty(repeated = True)#マップ更新時に対象とするhexのキー値
 
-    def creation(self,wname,wcreator,wMax_nat,wMax_turn):
+    def creation(self,wname,wcreator,wMax_nat,wMax_turn,world_size):
         #新規作成
         self.world_name = wname
         self.wcreator = wcreator
@@ -47,8 +48,22 @@ class World(ndb.Model):
         self.Max_turn = wMax_turn
         self.available = True
         self.Numnations = 0
-        self.Max_height = 10
-        self.Max_width = 10
+
+        if world_size == "tiny":
+            self.Max_height = 20
+            self.Max_width = 12
+        elif world_size == "small":
+            self.Max_height = 40
+            self.Max_width = 24
+        elif world_size == "standard":
+            self.Max_height = 80
+            self.Max_width = 52
+        elif world_size == "large":
+            self.Max_height = 128
+            self.Max_width = 80
+        else:
+            self.Max_height = 80
+            self.Max_width = 52
 
         #日付の初期設定
         self.year = 1

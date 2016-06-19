@@ -10,6 +10,7 @@ from models import internal_models
 from models import common_models
 from models import external_models
 from middle_process import gamescreen
+from middle_process import worldmap_gen
 import Cookie
 import hashlib
 from google.appengine.ext import db
@@ -292,8 +293,11 @@ class NewWorld(Common_Handler):
         wcreator = self.request.get("creator")
         wMax_nat = int(self.request.get("Max_nation"))
         wMax_turn = int(self.request.get("Max_turn"))
+        wSize = self.request.get("world_size")
         new_world = common_models.World()
-        new_world.creation(wname, wcreator, wMax_nat, wMax_turn)
+        new_world.creation(wname, wcreator, wMax_nat, wMax_turn,wSize)
+        new_map = worldmap_gen.Generate_Worldmap()
+        new_map.generate(new_world)
 
         self.redirect('/user_screen')
         return
