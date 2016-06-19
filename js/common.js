@@ -10,12 +10,11 @@
 			    .done(function(data) {
 			    	var jsonData = data
 			    	if (jsonData.code != 0){
-				    	alert(jsonData.msg);
+			    		$('header').after(jsonData.msg);
 			    	}else{
 			    		$('#mode').val('validated');
 			    		$form.submit();
 			    	}
-
 		 });
 	 });
  });

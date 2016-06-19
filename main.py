@@ -5,6 +5,7 @@ import os
 import csv
 import uuid
 import datetime
+import logging
 from models import internal_models
 from models import common_models
 from models import external_models
@@ -28,6 +29,7 @@ class Common_Handler(webapp2.RequestHandler):
         template_values.update(templates)
         path = os.path.join(os.path.dirname(__file__), './templates/', tURL)
         self.response.out.write(template.render(path, template_values))
+        return
 
     def makeHash(self,source):
         h = hashlib.md5()
@@ -47,6 +49,22 @@ class Common_Handler(webapp2.RequestHandler):
         #エラーメッセージ出力
         err = common_models.err_code().get_by_id(errcd)
         return err.disp_text
+
+    def resp_err(self,errcd):
+        msg_html = ""
+
+        if errcd <> 0:
+            #エラーメッセージ返送
+            ermsg = self.disp_err(errcd)
+            template_values = {"sys_message": ermsg.encode('utf_8')}
+            path = os.path.join(os.path.dirname(__file__), './templates/sys_message.html')
+            msg_html = template.render(path, template_values)
+
+        rsmsg = {"code":errcd,
+                 "msg":msg_html}
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(rsmsg))
+        return
 
 class Signin(Common_Handler):
     def get(self):
@@ -121,12 +139,14 @@ class GameScreen(Common_Handler):
 
             templates = {"sys_message":sys_message}
             self.display('ゲーム画面','game_screen.html',templates,0)
+        else:
+            errcd = 5825485334380544
+            self.resp_err(errcd)
 
         return
 
     def validate(self,user):
         errcd = 0
-        ermsg = ""
 
         if self.request.get("nation").isdigit() and self.request.get("world").isdigit():
             params = {"nationID":int(self.request.get("nation")),
@@ -138,15 +158,8 @@ class GameScreen(Common_Handler):
         else:
             errcd = 5825485334380544
 
-        if errcd <> 0:
-            ermsg = self.disp_err(errcd)
-
         #エラーメッセージ返送
-        rsmsg = {"code":errcd,
-                 "msg":ermsg.encode('utf_8')}
-        self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.dumps(rsmsg))
-
+        self.resp_err(errcd)
         return
 
 class UserScreen(Common_Handler):

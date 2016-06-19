@@ -47,6 +47,8 @@ class World(ndb.Model):
         self.Max_turn = wMax_turn
         self.available = True
         self.Numnations = 0
+        self.Max_height = 10
+        self.Max_width = 10
 
         #日付の初期設定
         self.year = 1
