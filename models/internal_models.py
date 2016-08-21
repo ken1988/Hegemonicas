@@ -10,6 +10,7 @@ import random
 from google.appengine.ext import ndb
 class Terrain(ndb.Model):
     terrain_name = ndb.StringProperty()
+    Fland = ndb.BooleanProperty()
 
 class Architect(ndb.Model):
     architect_name = ndb.StringProperty()

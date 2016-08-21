@@ -1,29 +1,82 @@
 {% extends "basic_page.html" %}
 {% block body %}
 <div id="main">
-<div id="errcd">
-<h2>エラーコード管理</h2>
-{% if new_code %}
-{{ new_code.id }}が登録されました。
+{% if sys_message %}
+<div id="sys_message" class="alert alert-danger" role="alert">
+{{ sys_message }}{{ res_cd }}
+</div>
 {% endif %}
-<ul>
-{% for ercd in all_ercd %}
-<li>{{ ercd.key }}:{{ ercd.disp_text }}</li>
-{% endfor %}
-</ul>
-<div id="maint_err" class="form-group">
-<form action="/maintenance" method="post">
-<input type="text" name="err_cat" placeholder="カテゴリー">
-<input type="text" name="err_txt" placeholder="テキスト">
-<input type="submit" class="btn btn-info  btn-sm" value="送信">
-</form>
-</div>
-</div>
-<div id="world_mainte">
-<h2>ワールドマップ管理</h2>
-{% for world in all_world %}
-{{ world.world_name }}<a href="/worldmap?id={{ world.key.id }}">ワールドマップ管理画面へ移動</a>
-{% endfor %}
-</div>
+	<div id="errcd">
+		<h2>エラーコード管理</h2>
+		<ul>
+			{% for ercd in all_ercd %}
+			<li>{{ ercd.key }}:{{ ercd.disp_text }}</li> {% endfor %}
+		</ul>
+		<div id="maint_err" class="form-group">
+			<form action="/maintenance" method="post">
+				<input type="text" name="err_cat" placeholder="カテゴリー">
+				<input type="text" name="err_txt" placeholder="テキスト">
+				<input type="hidden" name="mode" value="err_mainte">
+				<input type="submit" class="btn btn-info  btn-sm" value="送信">
+			</form>
+		</div>
+	</div>
+	<div id="terra_mainte">
+		<h2>地形データ管理</h2>
+		<ul>
+			{% for terra in all_terra %}
+			<li>{{ terra.terrain_name }}</li>
+			{% endfor %}
+		</ul>
+		<div id="maint_err" class="form-group">
+			<form action="/maintenance" method="post">
+				<input type="text" name="terrain_name" placeholder="名称">
+				<input type="checkbox" name="land_flag" value="Y">陸上地形か？
+				<input type="hidden" name="type" value="terra">
+				<input type="submit" class="btn btn-info  btn-sm" value="送信">
+			</form>
+		</div>
+	</div>
+	<div id="archi_mainte">
+		<h2>建造物データ管理</h2>
+		<ul>
+			{% for archi in all_arcjhi %}
+			<li>{{ archi.architect_name }}</li>
+			{% endfor %}
+		</ul>
+		<div id="maint_err" class="form-group">
+			<form action="/maintenance" method="post">
+				<input type="text" name="architect_name" placeholder="名称">
+				<input type="hidden" name="type" value="terra">
+				<input type="submit" class="btn btn-info  btn-sm" value="送信">
+			</form>
+		</div>
+	</div>
+	</div>
+	<div id="world_mainte">
+		<h2>ワールドマップ管理</h2>
+		{% for world in all_world %}
+		<div>
+			<h3>{{ world.world_name }}</h3>
+			<ul>
+				<li>マップサイズ：{{ world.Max_height }}×{{ world.Max_width }}</li>
+				<li>ターン数：{{ world.turn }}/{{ world.Max_turn }}</li>
+				<li>参加国数：{{ world.Numnations }}/{{ world.Max_nation }}</li>
+			</ul>
+			<div id="regen_{{ world.key.id }}" class="form-group">
+			<h4>ワールドマップ改変</h4>
+				<form action="/maintenance" method="post">
+				<input type="hidden" name="type" value="world">
+				<input type="hidden" name="wid" value="{{ world.key.id }}">
+				<select name="mode">
+				<option value="regen">ワールドマップを再生成する</option>
+				<option value="megafall">大災害を発生させる</option>
+				</select>
+				<input type="submit" class="btn btn-info  btn-sm" value="実行">
+				</form>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
 </div>
 {% endblock %}

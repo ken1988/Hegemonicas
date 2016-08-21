@@ -8,11 +8,9 @@
 <tr><td>メールアドレス</td><td>{{ user.mail }}</td></tr>
 <tr><td>ユーザ名</td><td>{{ user.name }}</td></tr>
 <tr><td>獲得済みの功績</td><td>{{ user.achivement }}</td></tr>
+<tr><td>ユーザカテゴリ</td><td>{{ user.category }}</td></tr>
 </table>
-{{ user.category }}
-{% if user.category == "Admin" %}
-<a href="/maintenance">メンテナンス画面へ</a>
-{% endif %}
+
 </div>
 <div id="world_select" class="bs-callout bs-callout-danger">
 <h2>ワールド選択</h2>
@@ -21,11 +19,11 @@
 {% for world,nation in joined_list %}
 <div id="{{ world.key.id }}" class="panel panel-primary">
 <img src="/img/Planet.jpg" alt="world_image">
-<form id="open_world_form"  action="/game_screen" method="post">
-<input type="button" id="open_world" name="open_world" value="{{ world.world_name }}">
-<input type="hidden" id="world" name="world" value="{{ world.key.id }}">
-<input type="hidden" id="nation" name="nation" value="{{ nation.key.id }}">
-<input type="hidden" id="mode" name="mode" value="pre_validation">
+<form class="open_world_form" id="frm_{{ world.key.id }}"  action="/game_screen" method="post">
+<input type="button" id="sb_{{ world.key.id }}" name="open_world" value="{{ world.world_name }}">
+<input type="hidden" id="w_{{ world.key.id }}" name="world" value="{{ world.key.id }}">
+<input type="hidden" id="n_{{ world.key.id }}" name="nation" value="{{ nation.key.id }}">
+<input type="hidden" id="m_{{ world.key.id }}" name="mode" value="pre_validation">
 </form>
 <ul>
 <li>{{ nation.Nation_Name }}</li>

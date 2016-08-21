@@ -2,7 +2,7 @@
  *
  */
  $(document).ready(function() {
-	 $('#open_world_form').click(function() {
+	 $('.open_world_form').click(function() {
        //操作対象のフォーム要素を取得
 		 var $form = $(this);
 		 $.post($form.attr('action'),
@@ -12,7 +12,7 @@
 			    	if (jsonData.code != 0){
 			    		$('header').after(jsonData.msg);
 			    	}else{
-			    		$('#mode').val('validated');
+			    		$form.find(':hidden[name="mode"]').val('validated');
 			    		$form.submit();
 			    	}
 		 });

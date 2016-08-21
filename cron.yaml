@@ -1,0 +1,4 @@
+cron:
+- description: daily WordsStock maintainer
+  url: /maintain/wordsstock
+  schedule: every 24 hours

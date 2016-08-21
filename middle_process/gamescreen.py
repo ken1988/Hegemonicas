@@ -4,7 +4,7 @@ Created on 2016/5/4
 
 @author: ken
 '''
-from models import common_models
+from models import common_models, internal_models
 from models import internal_models
 from google.appengine.ext import ndb
 
@@ -17,7 +17,8 @@ class Internal_GameScreen():
         初期画面を表示する
         '''
         return_param = {}
-        worldmap = internal_models.WorldMap.get_by_id(params['worldID'])
+        world = common_models.World.get_by_id(params['worldID'])
+#        worldmap = internal_models.WorldMap.get_by_id(params['worldID'])
         nation = internal_models.Nation.get_by_id(params['nationID'])
         projects=[]
 
@@ -25,7 +26,9 @@ class Internal_GameScreen():
             projects.append(internal_models.Project.get_by_id(prjID.id()))
 
         nation_stat = 0
-        return_param ={"view_point":10,
+        return_param ={"world_name":world.world_name,
+                       "nation_name":nation.Nation_Name,
+                       "view_point":10,
                        "nation_stat":nation_stat}
         return return_param
 

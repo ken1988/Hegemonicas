@@ -139,6 +139,7 @@ class GameScreen(Common_Handler):
             res_param = newScreen.display_initial(params)
 
             templates = {"sys_message":sys_message}
+            templates.update(res_param)
             self.display('ゲーム画面','game_screen.html',templates,0)
         else:
             errcd = 5825485334380544
@@ -312,10 +313,14 @@ class SystemConsol(Common_Handler):
         else:
             user = res
         all_errcd = common_models.err_code.query()
+        all_terra = internal_models.Terrain.query()
+        all_archi = internal_models.Architect()
         all_world = common_models.World.query()
 
         templates = {"all_ercd":all_errcd,
-                     "all_world":all_world}
+                     "all_world":all_world,
+                     "all_terra":all_terra,
+                     "all_archi":all_archi}
         self.display('システム管理画面','administration_screen.html',templates,0)
         return
 
@@ -326,12 +331,30 @@ class SystemConsol(Common_Handler):
         else:
             user = res
 
-        new_cd = common_models.err_code()
-        new_cd.category = self.request.get("err_cat")
-        new_cd.disp_text = self.request.get("err_txt")
-        ercd = new_cd.put()
+        if self.request.get("mode") == "err_mainte":
+            new_cd = common_models.err_code()
+            new_cd.category = self.request.get("err_cat")
+            new_cd.disp_text = self.request.get("err_txt")
+            recd = new_cd.put()
+            msg = "エラーコード："
 
-        templates = {"new_code":ercd}
+        if self.request.get("type") == "terra":
+            new_terra = internal_models.Terrain()
+            new_terra.terrain_name = self.request.get("terrain_name")
+            new_terra.Fland = False
+
+            if self.request.get("land_flag") == "Y":
+                new_terra.Fland = True
+
+            recd = new_terra.put()
+            msg = "地形コード："
+
+        if self.request.get("type") == "world":
+            if self.request.get("mode") == "regen":
+                tworld = common_models.World().get_by_id(int(self.request.get("wid")))
+
+
+        templates = {"sys_message":msg,"res_cd":recd}
         self.display('システム管理画面','administration_screen.html',templates,0)
         return
 

@@ -46,9 +46,10 @@
 				<div id="navbar" class="collapse navbar-collapse row" >
 					{% if flogin == 0 %}
 					<ul class="nav navbar-nav col-lg-7 col-md-8">
-						<li><a href="/Route">AAA</a></li>
-						<li><a href="/Route">VVV</a></li>
-						<li><a href="/Route">CCC</a></li>
+						<li><a href="/user_screen">ユーザ画面</a></li>
+					{% if user.category == "Admin" %}
+						<li><a href="/maintenance">管理画面</a></li>
+					{% endif %}
 						<li><a href="/sign-in?mode=logout">ログアウト</a></li>
 					</ul>
 					{% else %}
