@@ -5,7 +5,9 @@ Created on 2016/5/4
 @author: ken
 '''
 from models import common_models, internal_models
-from models import internal_models
+from models.internal_models import WorldMap
+from models.common_models import World
+from models.internal_models import Nation
 from google.appengine.ext import ndb
 
 class Internal_GameScreen():
@@ -17,9 +19,9 @@ class Internal_GameScreen():
         初期画面を表示する
         '''
         return_param = {}
-        world = common_models.World.get_by_id(params['worldID'])
-#        worldmap = internal_models.WorldMap.get_by_id(params['worldID'])
-        nation = internal_models.Nation.get_by_id(params['nationID'])
+        world = World.get_by_id(params['worldID'])
+        worldmaps = WorldMap.query(WorldMap.world_id == params['worldID'])
+        nation = Nation.get_by_id(params['nationID'])
         projects=[]
 
         for prjID in nation.Projectque:
@@ -35,8 +37,8 @@ class Internal_GameScreen():
 
     def validation_initial(self,params):
         try:
-            world = common_models.World.get_by_id(params['worldID'])
-            nation = internal_models.Nation.get_by_id(params['nationID'])
+            world = World.get_by_id(params['worldID'])
+            nation = Nation.get_by_id(params['nationID'])
             user = params['user']
             ercd = 0
 

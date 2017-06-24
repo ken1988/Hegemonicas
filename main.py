@@ -10,7 +10,7 @@ from models import internal_models
 from models import common_models
 from models import external_models
 from middle_process import gamescreen
-from middle_process import worldmap_gen
+from middle_process import worldmap
 import Cookie
 import hashlib
 from google.appengine.ext import db
@@ -297,7 +297,7 @@ class NewWorld(Common_Handler):
         wSize = self.request.get("world_size")
         new_world = common_models.World()
         new_world.creation(wname, wcreator, wMax_nat, wMax_turn,wSize)
-        new_map = worldmap_gen.Generate_Worldmap()
+        new_map = worldmap.Worldmap_Process()
         new_map.generate(new_world)
 
         self.redirect('/user_screen')
@@ -378,6 +378,24 @@ class WorldMap(Common_Handler):
 
         return
 
+class Update_World(Common_Handler):
+
+    def get(self):
+
+        all_world = common_models.World.query()
+        updWorld = worldmap.Worldmap_Process()
+
+
+        if self.request.get("mode") == "all":
+            for world in all_world:
+                updWorld.update_all(world)
+
+        else:
+            for world in all_world:
+                updWorld.update(world)
+
+        return
+
 class MainPage(Common_Handler):
 
     def get(self):
@@ -397,5 +415,6 @@ app = webapp2.WSGIApplication([('/',MainPage),
                                 ('/user_screen', UserScreen),
                                 ('/new_world', NewWorld),
                                 ('/maintenance', SystemConsol),
+                                ('/update_map', Update_World),
                                 ('/worldmap', WorldMap),
                                 ],debug=True)

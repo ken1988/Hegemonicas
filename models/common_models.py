@@ -39,6 +39,7 @@ class World(ndb.Model):
     Numnations = ndb.IntegerProperty()
     nations = ndb.KeyProperty(repeated = True)
     update_hex = ndb.KeyProperty(repeated = True)#マップ更新時に対象とするhexのキー値
+    world_imgs = ndb.BlobProperty(repeated = True)
 
     def creation(self,wname,wcreator,wMax_nat,wMax_turn,world_size):
         #新規作成

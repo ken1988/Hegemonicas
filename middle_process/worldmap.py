@@ -7,7 +7,7 @@ from models import common_models
 from models import internal_models
 from google.appengine.ext import ndb
 
-class Generate_Worldmap():
+class Worldmap_Process():
     def generate(self, world):
 
         x = 0
@@ -22,5 +22,14 @@ class Generate_Worldmap():
                 created_hex.locationX = x
                 created_hex.locationY = y
                 created_hex.put()
+
+        return
+
+    def update(self,world):
+
+        for updHexKey in world.update_hex:
+            updHex = internal_models.WorldMap.get_by_id(updHexKey.id())
+
+    def update_all(self,world):
 
         return

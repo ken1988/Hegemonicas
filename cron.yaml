@@ -1,4 +1,8 @@
 cron:
 - description: daily WordsStock maintainer
-  url: /maintain/wordsstock
+  url: /update_stock
   schedule: every 24 hours
+
+- description: Update Worldmap
+  url: /update_map
+  schedule: every 1 hour
