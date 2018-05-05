@@ -5,4 +5,4 @@ cron:
 
 - description: Update Worldmap
   url: /update_map
-  schedule: every 1 hour
+  schedule: every 24 hours
